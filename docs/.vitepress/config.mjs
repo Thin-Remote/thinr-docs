@@ -159,6 +159,7 @@ export default defineConfig({
   description: 'Remote device management and IoT platform',
   cleanUrls: true,
   lastUpdated: true,
+  sitemap: { hostname: 'https://docs.thinremote.io' },
 
   // Sections still being written: excluded from the published build.
   srcExclude: ['web-console/**', 'resources/**'],
