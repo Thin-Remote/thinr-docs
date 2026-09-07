@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import llmstxt from 'vitepress-plugin-llms';
 
 const startSidebar = [
   {
@@ -163,6 +164,7 @@ export default defineConfig({
   srcExclude: ['web-console/**', 'resources/**'],
 
   vite: {
+    plugins: [llmstxt()],
     server: {
       host: true,
       allowedHosts: true,
