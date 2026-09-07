@@ -5,7 +5,9 @@ description: Real scenarios where ThinRemote replaces VPNs, bastions and port-fo
 
 # Use cases
 
-ThinRemote works for anything that runs Linux or macOS, from an ARMv5 industrial controller to a Kubernetes node. This section groups the most common deployment scenarios in two families:
+ThinRemote works for anything that runs Linux or macOS, from an ARMv5 industrial controller to a Kubernetes node. The common thread across every scenario below is the same: the device dials out over TLS, nothing listens on it, and you reach whatever the device can reach (its terminal, its files, a local web panel, a service on its LAN) without opening ports, running a VPN, or sending a technician on site.
+
+This section groups the most common deployment scenarios in two families:
 
 ## IoT & Embedded
 

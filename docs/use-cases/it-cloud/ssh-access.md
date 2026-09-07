@@ -1,19 +1,42 @@
 ---
 title: SSH access behind firewalls
-description: Replace bastion hosts and jump boxes with outbound-only SSH.
+description: Reach SSH on machines in private subnets, behind NAT, or in a lab with no open ports.
 ---
 
 # SSH access behind firewalls
 
-Traditional SSH requires open ports or a bastion host. ThinRemote replaces both with an outbound-only tunnel you can open from any terminal or CI job.
+A server in a private subnet, behind NAT, or on an isolated lab bench has no route in from the outside. ThinRemote carries SSH over the platform instead: the device keeps an outbound connection, and `thinr device tcp` exposes port 22 through a relay port on the server. No bastion host, no inbound firewall rule, no static IP.
 
-## What ThinRemote gives you
+## The problem
 
-- `thinr device console <id>`: interactive terminal.
-- `thinr device tcp <id> 22`: expose SSH through a relay port on the server for standard `ssh` clients.
-- `thinr device exec <id> "<cmd>"`: one-shot commands with streaming output.
+Classic remote maintenance depends on a jump box or a VPN concentrator that you have to provision, patch, and keep reachable. Every exposed SSH endpoint is another port to defend, and machines behind NAT often cannot be reached at all without extra network plumbing.
 
-## Planned content
+## How ThinRemote fits
 
-- Using ThinRemote as an SSH transport in `~/.ssh/config`
-- CI integration with JSON mode
+- Open an interactive shell straight away, no SSH client needed:
+
+```bash
+thinr device console <id>
+```
+
+- Expose SSH through a relay port on the server, then connect a standard client to the printed port:
+
+```bash
+thinr device tcp <id> 22
+ssh user@<server> -p <printed port>
+```
+
+- Run one-off maintenance without a full session:
+
+```bash
+thinr device exec <id> "apt-get update && apt-get -y upgrade"
+```
+
+- Because the relay port is short-lived, close it with Ctrl+C when the work is done. Wire the printed port into `~/.ssh/config` for scp, rsync, or Ansible over the same tunnel.
+
+## Related
+
+- [SSH and console](/cli/ssh-and-console)
+- [TCP & TLS tunneling](/cli/tcp-tls-tunneling)
+- [Exec commands](/cli/exec-commands)
+- [Device agent terminal](/device-agent/terminal)

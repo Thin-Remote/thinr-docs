@@ -160,7 +160,7 @@ export default defineConfig({
   lastUpdated: true,
 
   // Sections still being written: excluded from the published build.
-  srcExclude: ['web-console/**', 'use-cases/**', 'resources/**'],
+  srcExclude: ['web-console/**', 'resources/**'],
 
   vite: {
     server: {
@@ -178,6 +178,7 @@ export default defineConfig({
       { text: 'Get Started', link: '/getting-started/quick-start', activeMatch: '^/getting-started/' },
       { text: 'Device Agent', link: '/device-agent/', activeMatch: '^/device-agent/' },
       { text: 'CLI & MCP', link: '/cli/', activeMatch: '^/(cli|mcp)/' },
+      { text: 'Use Cases', link: '/use-cases/', activeMatch: '^/use-cases/' },
     ],
 
     sidebar: {
@@ -185,6 +186,37 @@ export default defineConfig({
       '/device-agent/': agentSidebar,
       '/cli/': cliSidebar,
       '/mcp/': cliSidebar,
+
+      '/use-cases/': [
+        {
+          text: 'Use cases',
+          items: [
+            { text: 'Overview', link: '/use-cases/' },
+          ],
+        },
+        {
+          text: 'IoT & Embedded',
+          items: [
+            { text: 'Kiosks and signage', link: '/use-cases/iot-embedded/kiosks-and-signage' },
+            { text: 'Industrial PLCs', link: '/use-cases/iot-embedded/industrial-plcs' },
+            { text: 'Vending machines', link: '/use-cases/iot-embedded/vending-machines' },
+            { text: 'Retail POS', link: '/use-cases/iot-embedded/retail-pos' },
+            { text: 'Edge gateways', link: '/use-cases/iot-embedded/edge-gateways' },
+            { text: 'EV charging', link: '/use-cases/iot-embedded/ev-charging' },
+          ],
+        },
+        {
+          text: 'IT & Cloud',
+          items: [
+            { text: 'Dashboards tunneling', link: '/use-cases/it-cloud/dashboards-tunneling' },
+            { text: 'SSH access', link: '/use-cases/it-cloud/ssh-access' },
+            { text: 'Alert-triggered access', link: '/use-cases/it-cloud/alert-triggered' },
+            { text: 'Remote dev', link: '/use-cases/it-cloud/remote-dev' },
+            { text: 'Multi-cloud', link: '/use-cases/it-cloud/multi-cloud' },
+            { text: 'Kubernetes', link: '/use-cases/it-cloud/kubernetes' },
+          ],
+        },
+      ],
     },
 
     socialLinks: [

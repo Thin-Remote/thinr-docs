@@ -1,19 +1,47 @@
 ---
-title: Multi-cloud and hybrid infrastructure
-description: One access layer across AWS, Azure, GCP and on-prem.
+title: Multi-cloud & hybrid infrastructure
+description: One CLI and one AI assistant across AWS, Azure, on-prem and more, without agent sprawl.
 ---
 
-# Multi-cloud and hybrid infrastructure
+# Multi-cloud & hybrid infrastructure
 
-Enterprises running on multiple clouds plus on-prem hardware end up with as many remote access stacks as providers. ThinRemote unifies all of them behind a single agent and a single CLI.
+Resources spread across AWS, Azure, on-prem racks, and edge sites each come with their own console, network, and access model. ThinRemote gives you one outbound-only agent and one CLI across all of them, so a machine is reachable the same way whether it lives in a public cloud VPC or a closet. There is no vendor lock-in and no separate access stack per provider.
 
-## What ThinRemote gives you
+## The problem
 
-- One agent on every host, regardless of where it runs.
-- Profiles to switch between cloud environments without re-authenticating.
-- Consistent RBAC and audit across the whole fleet.
+Every provider ships its own bastion, its own session manager, and its own identity plumbing. Stitching them together means juggling profiles, jump hosts, and half a dozen agents, and the on-prem boxes still need a VPN that none of the cloud tools understand.
 
-## Planned content
+## How ThinRemote fits
 
-- Reference topology for multi-cloud
-- Cost comparison vs per-cloud VPN solutions
+- Group machines that belong together (by cloud, region, or role) into a product, then run one command across the whole fleet:
+
+```bash
+thinr product exec <productId> "uptime" -g azure-west
+```
+
+- Check the state of every device in a product at a glance:
+
+```bash
+thinr product status <productId>
+```
+
+- Reach any single machine identically, wherever it runs:
+
+```bash
+thinr device console <id>
+```
+
+- Roll a coordinated agent update across every provider at once:
+
+```bash
+thinr fleet upgrade
+```
+
+- Point the built-in MCP server at an AI assistant to operate across all providers from one place: see the AI assistant guide.
+
+## Related
+
+- [Products and groups](/getting-started/products-and-groups)
+- [Exec commands](/cli/exec-commands)
+- [AI assistant](/getting-started/ai-assistant)
+- [JSON and automation](/cli/json-and-automation)
