@@ -1,0 +1,68 @@
+---
+title: Device agent CLI
+description: Commands and flags of the thinr-agent binary.
+---
+
+# Device agent CLI
+
+The installed binary doubles as its own management tool. Running `thinr-agent` without a command opens the interactive setup menu.
+
+## Global options
+
+| Flag | Meaning |
+|------|---------|
+| `-h, --help` | Show help (also per command). |
+| `--version` | Print the agent version. |
+| `-c, --config <path>` | Use a custom config file (default: `/etc/thinr-agent/config.json` as root, `~/.config/thinr-agent/config.json` otherwise). |
+| `-v` / `-vv` | Verbose (info) / debug logging to the console. |
+
+## Commands
+
+### `install`
+
+Headless installation: registers the device, writes the config and sets up the service without prompts. See [headless provisioning](/device-agent/headless-provisioning) for recipes.
+
+| Flag | Meaning |
+|------|---------|
+| `--token TOKEN` | Auto-provisioning token; skips interactive authentication. |
+| `--device ID` | Custom device identifier (default: hostname). |
+| `--product ID` | Product to associate (default: auto-detect, or `thinremote`). |
+| `--host HOST` | Server to register against (usually embedded in the token). |
+| `--overwrite` | Re-register without prompting if the device already exists. |
+| `--no-start` | Install the service but don't start it. |
+| `--no-verify-ssl` | Disable TLS certificate verification (self-signed test servers). |
+
+### `update`
+
+Check for or apply a self-update. Without `--apply` it only reports whether an update is available.
+
+| Flag | Meaning |
+|------|---------|
+| `--channel NAME` | Release channel: `latest` (stable), `main`, `develop`. Default: `latest`. |
+| `--apply` | Download, verify and install the update. |
+
+```bash
+thinr-agent update                       # check only
+thinr-agent update --channel main --apply
+```
+
+See the [update mechanism](./auto-update) for the full flow.
+
+### `status`, `test`, `reconfigure`, `uninstall`
+
+| Command | Purpose |
+|---------|---------|
+| `status` | Show the connection status of the running agent. |
+| `test` | Test connectivity with the current configuration. |
+| `reconfigure` | Re-run the interactive setup (new server, new credentials). |
+| `uninstall` | Remove the service and the configuration. |
+
+### `bootstrap`
+
+Seed the account's default monitoring alarm rules without provisioning a device. Useful when preparing an instance before any agent is installed.
+
+| Flag | Meaning |
+|------|---------|
+| `--token TOKEN` | JWT carrying `svr` (host) and `usr` (account) claims. Required. |
+| `--force` | Delete existing default rules and recreate them. |
+| `--no-verify-ssl` | Disable TLS certificate verification. |
