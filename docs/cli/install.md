@@ -40,13 +40,39 @@ You'll be asked for the ThinRemote server and can authenticate using one of:
 - Username and password.
 - Pre-issued bearer token.
 
-The profile is saved at `~/.config/thinr-cli/config.json` and marked as the default. Expired tokens are refreshed transparently when a refresh token is available.
+The profile is saved at `~/.config/thinr-cli/config.json` and marked as the default. While you keep using the CLI, expired access tokens are refreshed transparently in the background, so you stay signed in without doing anything.
 
 Verify everything works:
 
 ```bash
 thinr device list
 ```
+
+## Re-authenticating an expired session
+
+If a profile goes unused for a long time (weeks or months), its refresh token eventually expires and the CLI can no longer renew the session on its own. You'll see:
+
+```
+Token refresh failed; re-authenticate.
+```
+
+This is expected: like any credential, an idle login eventually has to be renewed by signing in again. Running `thinr` alone won't do it, because with an existing profile it opens the dashboard instead of prompting for login. To renew, recreate the profile.
+
+First find its name (the one shown in the top bar of the dashboard):
+
+```bash
+thinr profile list
+```
+
+Then delete that profile and add it again, which triggers a fresh login:
+
+```bash
+thinr profile delete <name>
+thinr profile add <name>
+thinr device list          # confirm you're back in
+```
+
+`profile add` runs the same interactive login as first-time setup (browser, credentials, or token), and points at the same server. If it's your only profile, `thinr logout` followed by `thinr` does the same thing.
 
 ## Multiple accounts and environments
 
