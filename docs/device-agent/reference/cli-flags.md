@@ -48,14 +48,16 @@ thinr-agent update --channel main --apply
 
 See the [update mechanism](./auto-update) for the full flow.
 
-### `status`, `test`, `reconfigure`, `uninstall`
+### `reconfigure`, `uninstall`
 
 | Command | Purpose |
 |---------|---------|
-| `status` | Show the connection status of the running agent. |
-| `test` | Test connectivity with the current configuration. |
 | `reconfigure` | Re-run the interactive setup (new server, new credentials). |
-| `uninstall` | Remove the service and the configuration. |
+| `uninstall` | Stop the service, remove the unit, the binary, the configuration and the logs. |
+
+Both act on the scope matching the effective user id of the process: run them with `sudo` for a system-wide install, without it for a user install. Both are interactive and refuse to run without a terminal, so over SSH use `ssh -t`.
+
+The `status` and `test` commands are listed in `--help` but are not implemented yet: they print a message and exit non-zero. To check a running agent use the init system (`systemctl status thinr-agent`) or the platform (`thinr device list`).
 
 ### `bootstrap`
 

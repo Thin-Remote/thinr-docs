@@ -8,9 +8,11 @@ description: Provision devices unattended with a token and host.
 For fleets, factory lines, or CI images, skip the interactive prompts entirely. The launcher script forwards everything after `--` verbatim to the agent binary, so a complete unattended install is a single line:
 
 ```bash
-curl -fsSL https://get.thinremote.io/install.sh | sh -s -- \
+curl -fsSL https://get.thinremote.io/install.sh | sudo sh -s -- \
   install --token <PROVISIONING_TOKEN> --device my-device-01 --overwrite
 ```
+
+Keep the `sudo` explicit. With no terminal to prompt on, the installer elevates by itself only where sudo needs no password; being explicit gives the same result on every machine in the fleet. Drop it when the session is already root, and pass `--user` before `install` when you deliberately want an unprivileged install. See [system or user install](/device-agent/install#system-or-user-install).
 
 If the binary is already on the device (for example baked into an OS image), call it directly:
 
@@ -60,11 +62,15 @@ while read -r host; do
 done < hosts.txt
 ```
 
+No `sudo` inside the quotes because the session is already root. For an account with sudo rights instead, use `sudo sh -s --`.
+
 Configuration-management users (Ansible, Puppet, cloud-init) can wrap the same one-liner in their tool of choice.
 
 ### Verify the result
 
-A headless install exits non-zero on failure, so it composes with `set -e` pipelines. After provisioning, confirm from your workstation:
+A headless install exits non-zero on failure, so it composes with `set -e` pipelines. Note that an agent that is already configured counts as a failure here: the installer refuses to provision over an existing configuration and exits non-zero without touching the running agent, which keeps a re-run from silently re-registering a live device. Uninstall first when you mean to re-provision from scratch.
+
+After provisioning, confirm from your workstation:
 
 ```bash
 thinr device list my-device-01

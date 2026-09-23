@@ -18,6 +18,8 @@ Drop an executable into the agent's scripts directory and it registers automatic
 
 The contract is simple: answer `--describe` with your input/output schema, then read JSON on stdin and print JSON on stdout. The full protocol lives in the [custom scripts spec](/device-agent/reference/custom-scripts-spec).
 
+The agent scans that directory when it starts. A script you add later is picked up by the agent's `$scripts/reload` resource: it rescans the directory, registers what is new, unregisters what is gone, and returns the resulting list. `$scripts/info` returns the current list without rescanning. Deploying over MCP takes effect immediately because `thinr_script_write` and `thinr_script_delete` call reload for you.
+
 ```bash
 thinr device resource edge-gw-17            # the script shows up as a resource
 thinr device resource edge-gw-17 battery    # call it

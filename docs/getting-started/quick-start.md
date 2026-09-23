@@ -30,9 +30,11 @@ curl -fsSL https://get.thinremote.io/install.sh | sh
 
 The installer detects your system, registers the service, and walks you through authentication; when it asks, point it at **your instance** and approve from the browser.
 
+A system service needs root, so if you are not root the installer offers to elevate with sudo. Say yes and the agent starts at boot like any other service; say no and it installs under your user only. Piping into `sudo sh` skips the question. Either way it prints which mode it chose before installing. See [system or user install](/device-agent/install#system-or-user-install).
+
 **You should see** the installer finish with the service running, and the device appear in your web console.
 
-Full version: [Install the agent](/device-agent/install), with root vs user mode, auth options and troubleshooting. Onboarding many devices? That's [headless provisioning](/device-agent/headless-provisioning).
+Full version: [Install the agent](/device-agent/install), with system vs user install, auth options and troubleshooting. Onboarding many devices? That's [headless provisioning](/device-agent/headless-provisioning).
 
 ## 2. Install and authenticate the CLI
 

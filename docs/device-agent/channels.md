@@ -63,4 +63,10 @@ Every release is archived under its own version directory on the CDN (`binaries/
 curl -fsSL https://get.thinremote.io/install.sh | CHANNEL=v1.2.3 sh
 ```
 
+For a system install, set the variable on the `sudo` command line, since sudo resets the environment and would drop it otherwise:
+
+```bash
+curl -fsSL https://get.thinremote.io/install.sh | sudo CHANNEL=v1.2.3 sh
+```
+
 A pinned device stays on that version until you explicitly update it: version directories never change after release, while channel directories always track their head.
