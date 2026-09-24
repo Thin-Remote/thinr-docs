@@ -14,7 +14,7 @@ description: Run agents safely and effectively over your ThinRemote fleet.
 
 ## Effectiveness
 
-- **Name the device or product in your prompt.** "Check the disk on store-14" beats "check disks" followed by a fleet-wide scan; the assistant passes `device` per call and saves a discovery round-trip.
+- **Name the device or product in your prompt.** "Check the disk on store-14" beats "check disks" followed by a fleet-wide scan; the assistant passes `device_id` per call and saves a discovery round-trip.
 - **Use the regex query.** `thinr_devices` filters by id and name, so "list the EU gateways" maps to one call instead of listing everything and filtering in context.
 - **Reach for fan-out tools, not loops.** `thinr_product_exec` runs a command across the product in one call with per-device results; the same goes for `thinr_product_write` for files.
 - **Validate playbooks before running them.** `thinr_playbook_validate` catches schema errors cheaply; then run with check mode against one device before any rollout.

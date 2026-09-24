@@ -15,7 +15,7 @@ The MCP server **is** the CLI: if you've [installed and authenticated `thinr`](/
 
 - **No bespoke integration code.** The tools are already there: one registration command and your assistant operates real devices. Anything you'd otherwise script against the API, an agent can compose on the fly.
 - **Same auth and access control.** The server acts under your profile's token, so an assistant can do exactly what you can do from the CLI, nothing more. Roles, scoping and revocation apply identically.
-- **Fleet-aware by design.** Every tool accepts optional `device`, `user` and `profile` arguments, so a single running server addresses any device in any of your configured environments, without restarts.
+- **Fleet-aware by design.** Every tool accepts optional `device_id`, `user` and `profile` arguments, so a single running server addresses any device in any of your configured environments, without restarts.
 
 This changes what "remote management" means in practice: instead of translating a hunch into commands, you describe the outcome ("find out why store 14 keeps dropping offline and fix it") and the agent inspects, diagnoses and acts with the same primitives you'd use by hand.
 

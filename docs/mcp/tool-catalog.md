@@ -5,7 +5,7 @@ description: Complete list of tools exposed by the ThinRemote MCP server.
 
 # Tool catalog
 
-Every tool accepts optional `device`, `user` and `profile` arguments: `device` targets a device where it applies, `user` enables admin impersonation, and `profile` switches the environment for that single call.
+Every tool accepts optional `device_id`, `user` and `profile` arguments: `device_id` targets a device where it applies, `user` enables admin impersonation, and `profile` switches the environment for that single call.
 
 ## Discovery
 
