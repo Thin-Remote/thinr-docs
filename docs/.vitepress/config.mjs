@@ -46,11 +46,13 @@ const agentSidebar = [
     ],
   },
   {
-    text: 'Install',
+    text: 'Install, update, uninstall',
     items: [
       { text: 'Interactive installation', link: '/device-agent/install' },
       { text: 'Headless provisioning', link: '/device-agent/headless-provisioning' },
       { text: 'Release channels', link: '/device-agent/channels' },
+      { text: 'Agent updates', link: '/device-agent/agent-updates' },
+      { text: 'Uninstall', link: '/device-agent/uninstall' },
     ],
   },
   {
@@ -62,7 +64,6 @@ const agentSidebar = [
       { text: 'Tunnels', link: '/device-agent/tunnels' },
       { text: 'Monitoring and alarms', link: '/device-agent/monitoring-and-alarms' },
       { text: 'Custom scripts', link: '/device-agent/custom-scripts' },
-      { text: 'Agent updates', link: '/device-agent/agent-updates' },
     ],
   },
   {
@@ -90,9 +91,10 @@ const cliSidebar = [
     ],
   },
   {
-    text: 'Install',
+    text: 'Install, update, uninstall',
     items: [
       { text: 'Install the CLI', link: '/cli/install' },
+      { text: 'Update and uninstall', link: '/cli/update-and-uninstall' },
     ],
   },
   {

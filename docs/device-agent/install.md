@@ -55,9 +55,10 @@ curl -fsSL https://get.thinremote.io/install.sh | sh -s -- --user    # user inst
 | Flag | Meaning |
 |------|---------|
 | `--user` | Install for the current user. Never elevates. |
+| `-v`, `--version VERSION` | Install a specific release, such as `v1.6.8`, instead of the channel's head. |
 | `-h`, `--help` | Show the installer's own help. |
 
-To install something other than the stable channel's head, set `CHANNEL`: it takes `main`, `develop` or a version tag such as `v1.6.7`. See [release channels](/device-agent/channels).
+To install from another channel, set `CHANNEL` to `main` or `develop`. See [release channels](/device-agent/channels).
 
 These flags belong to the installer script, so they go before any agent arguments. Everything from the first unrecognised argument onwards is forwarded verbatim to the agent, which is how [headless provisioning](/device-agent/headless-provisioning) passes `install --token …`.
 
@@ -115,42 +116,27 @@ thinr-agent reconfigure        # user install
 
 Over SSH that means `ssh -t host sudo thinr-agent reconfigure`, not `ssh host "sudo thinr-agent reconfigure"`.
 
+## Update
+
+The installed binary updates itself, on demand:
+
+```bash
+sudo thinr-agent update            # check
+sudo thinr-agent update --apply    # apply
+```
+
+Nothing changes on a device until you ask for it. See [agent updates](/device-agent/agent-updates) for the same operation from your workstation, across a whole product, or on a schedule.
+
 ## Uninstall
 
-`uninstall` stops the service, removes the unit, deletes the installed binary and drops the configuration and log directories. It asks for confirmation first, so like `reconfigure` it needs a terminal.
-
-Uninstall with the same privileges you installed with: `uninstall` only touches the scope matching its effective user id, so as root it removes the system install and ignores any user one, and as a regular user it removes only that user's install. A device that ended up with both needs both commands.
+The installed binary is its own uninstaller, run with the same privileges you installed with:
 
 ```bash
 sudo thinr-agent uninstall   # system install
 thinr-agent uninstall        # user install
 ```
 
-::: tip A leftover user install looks like a failed system install
-`~/.local/bin` comes before `/usr/local/bin` in the `PATH` on most distributions, and a user service keeps running and reporting to the platform on its own. Clean up an unwanted user install before reinstalling as root, or the old agent will keep showing up. `command -v thinr-agent` tells you which binary you are actually talking to.
-:::
-
-If the binary is gone, or an install was interrupted halfway, remove the leftovers by hand:
-
-```bash
-# system install (systemd)
-sudo systemctl disable --now thinr-agent
-sudo rm -f /etc/systemd/system/thinr-agent.service
-sudo rm -rf /etc/thinr-agent /var/log/thinr-agent
-sudo rm -f /usr/local/bin/thinr-agent /usr/bin/thinr-agent
-sudo systemctl daemon-reload
-
-# user install (systemd)
-systemctl --user disable --now thinr-agent
-rm -f ~/.config/systemd/user/thinr-agent.service
-rm -rf ~/.config/thinr-agent ~/.local/share/thinr-agent
-rm -f ~/.local/bin/thinr-agent
-systemctl --user daemon-reload
-```
-
-On OpenRC, SysV or Upstart the service file is wherever your init system keeps it for `thinr-agent`; the binary, config and log paths are the ones in the table above.
-
-Uninstalling removes the agent from the device, not the device from your account: delete it from the web console if you no longer need it.
+See [uninstall](/device-agent/uninstall) for the scope rules, the leftovers an interrupted install can leave behind, and how to remove them by hand.
 
 ## Troubleshooting
 

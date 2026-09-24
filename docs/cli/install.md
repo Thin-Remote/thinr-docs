@@ -13,7 +13,7 @@ The CLI is distributed as an npm package and requires Node.js ≥ 18.
 npm install -g @thinremote/thinr-cli
 ```
 
-This puts `thinr` on your `PATH`. To upgrade later, run `npm update -g @thinremote/thinr-cli`.
+This puts `thinr` on your `PATH`. See [update and uninstall](/cli/update-and-uninstall) for moving to a new version, switching to pre-release builds, or removing it.
 
 ::: tip Permission denied (`EACCES`) on the global install?
 This means your npm global prefix is root-owned, which happens when Node was installed with the official macOS/Linux installer. The clean fixes are using a Node version manager (nvm, fnm, volta) or [moving the npm prefix to a user directory](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally); `sudo npm install -g` also works, but npm itself recommends the former. Homebrew and version-manager installs of Node don't have this problem.
