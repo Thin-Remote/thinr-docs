@@ -32,6 +32,23 @@ Print a JSON object describing the expected input and output shapes:
 - **Output**: print a JSON object to stdout; that is the resource's response.
 - **Failure**: exit non-zero. Stderr is captured for diagnostics.
 - **Permissions**: the script runs as the agent's user (root in a system install), so the OS enforces what it can touch.
+- **Invalid JSON**: stdout that does not parse comes back as a string under `output`. That is a fallback for broken quoting, not a second output format: a resource whose fields collapse into one string cannot be charted as a [dashboard metric](/cli/reference/product-commands#dashboard-metrics), alarmed on, or rendered as fields in the console.
+
+### Building the JSON safely
+
+The example below interpolates a number, which is safe. Interpolating a value you do not control is not: a hostname, a filename or any command output containing a quote or a backslash produces a broken document, and the caller gets a string where it expected fields.
+
+Encode with a real serializer, and pass the value through the environment rather than into the interpreter's source:
+
+```bash
+# jq, when the device has it
+VALUE="$(hostname)" jq -n --arg v "$VALUE" '{hostname: $v}'
+
+# python3, which Debian-based images carry and jq images often don't
+VALUE="$(hostname)" python3 -c 'import json,os; print(json.dumps({"hostname": os.environ["VALUE"]}))'
+```
+
+Neither is guaranteed to exist: a stock Raspberry Pi OS image has `python3` but no `jq`, and a BusyBox image usually has neither. Check with `command -v` and pick at runtime, or keep the output to values you generate yourself (numbers, fixed strings) where `printf` is enough.
 
 ## Minimal example
 
