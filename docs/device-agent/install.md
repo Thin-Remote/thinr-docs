@@ -105,6 +105,8 @@ journalctl --user -u thinr-agent -f   # Linux, user install
 
 The device should immediately appear in the web console and in `thinr device list`.
 
+`thinr-agent --version` prints what got installed. To find out whether that is the current release, see [am I on the latest?](/device-agent/agent-updates#am-i-on-the-latest).
+
 ## Reconfigure
 
 To point the agent at another server, or to re-authenticate it, run the guided setup again. `reconfigure` drops the existing configuration and starts the wizard, so it needs an interactive terminal:

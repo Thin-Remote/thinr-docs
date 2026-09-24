@@ -7,6 +7,31 @@ description: Every way to check and apply agent updates, from the device to the 
 
 The agent updates **on demand**: nothing changes on a device until you (or your automation) ask for it. All entry points drive the same verified mechanism, so pick whichever fits the moment.
 
+## Am I on the latest?
+
+Every check reports the same two numbers: what the device runs and what the channel currently offers.
+
+```bash
+thinr device update check <deviceId>     # from your workstation
+thinr-agent update                       # on the device, checks without applying
+```
+
+```json
+{ "current": "v1.6.6", "latest": "v1.6.8", "status": "update_available" }
+```
+
+`status` is `up_to_date` when they match. For the installed version alone, `thinr-agent --version` on the device.
+
+To see what a channel offers without involving any device, read its manifest. Handy in a script, or when deciding whether an upgrade round is worth it:
+
+```bash
+curl -s https://get.thinremote.io/latest.json    # also main.json, develop.json
+```
+
+It carries the version and the SHA256 of every architecture's binary, which is the same manifest the agent verifies against when it updates itself.
+
+Across a fleet, `thinr fleet upgrade --dry-run` lists every outdated device without changing anything. See [fleet commands](/cli/reference/fleet-commands).
+
 ## On the device itself
 
 The installed binary manages its own updates:

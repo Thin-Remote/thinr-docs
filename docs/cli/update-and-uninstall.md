@@ -16,7 +16,8 @@ npm install -g @thinremote/thinr-cli@latest
 `npm update -g` also works, but pinning `@latest` is the reliable form: npm's update rules for global packages depend on the range recorded at install time. Check what you ended up with:
 
 ```bash
-thinr --version
+thinr --version                              # what you have
+npm view @thinremote/thinr-cli version       # what is published
 ```
 
 ### Release channels
