@@ -1,84 +1,83 @@
 ---
 title: MCP tool catalog
-description: Complete list of tools exposed by the ThinRemote MCP server.
+description: The eight tools of the ThinRemote MCP server, the resource types they reach and the actions each type runs.
 ---
 
 # Tool catalog
 
-Every tool accepts optional `device_id`, `user` and `profile` arguments: `device_id` targets a device where it applies, `user` enables admin impersonation, and `profile` switches the environment for that single call.
+The server exposes **eight tools**. Every operation goes through one of them: what changes from call to call is the resource **type** (a device, a file on a device, a product playbook, a bucket's time series…), the **ids** that locate the record, and for actions, the **action** name.
 
-## Discovery
+| Tool | What it does |
+|------|--------------|
+| **`thinr_resource_describe`** | Without arguments: every type with its operations and actions, example calls, and the guide to the platform's concepts. With a `type`: its ids, filters, bodies, actions, permissions and ready-to-send examples. Agents call it first. |
+| **`thinr_resource_list`** | List the records of a type, in pages of 50 (`count`, `index`), with `search` by id or name and a `filter` (product, asset group, labels, any field of the record). |
+| **`thinr_resource_get`** | Read one record. |
+| **`thinr_resource_create`** | Create a record from `body`. Also writes data: samples to a bucket, files to a storage or to a device. |
+| **`thinr_resource_update`** | Update a record; fields left out are kept. Property values are replaced unless `merge: true`. |
+| **`thinr_resource_delete`** | Delete a record (immediate and permanent). |
+| **`thinr_resource_clone`** | Copy a record under a new id. |
+| **`thinr_resource_call`** | Run an action: anything that is not create, read, update or delete (run a command, call a device resource, roll out a playbook…). |
 
-- **`thinr_devices`**: list devices, with an optional regex `query` over id and name.
-- **`thinr_device_info`**: detailed info for one device.
-- **`thinr_profiles`**: list the configured CLI profiles (environments).
+## Arguments
 
-## Shell
+- **`type`**: the resource type, e.g. `"device"`, `"device_fs"`, `"product_playbook"`.
+- **`ids`**: the record and its parents, one key per level: `{"device": "gw_1"}`, `{"device": "gw_1", "property": "firmware"}`, `{"device": "gw_1", "path": "/etc/hosts"}`. Leave out the record's own id to list a collection. The records the tools answer carry their `ids`, so an agent passes them back as they are.
+- **`body`**: the record to create or update, or the input of an action.
+- **`action`** (on `thinr_resource_call`): the action to run, e.g. `"exec"`.
+- **`user`** and **`profile`**, on every tool: act on another account (admin impersonation) or on another configured environment for that one call. `thinr_resource_list` type `"profile"` lists the profiles.
 
-- **`thinr_exec`**: run a shell command on a device, with stdout/stderr and exit code.
+## ThinRemote types
 
-## Filesystem
+These types and actions come from the ThinRemote agent running on the devices.
 
-- **`thinr_ls`** · **`thinr_read`** · **`thinr_write`** · **`thinr_push`** · **`thinr_pull`** · **`thinr_mkdir`** · **`thinr_rm`** · **`thinr_mv`**: the full file toolset, mirroring the [CLI file operations](/cli/file-management).
+| Type | ids | Operations and actions |
+|------|-----|------------------------|
+| `device` | `device` | Action **`exec`**: run a shell command, with its output and exit code. On one device (`ids.device`) or on several in parallel (no ids; `body.devices`, `body.product` with an optional `body.group`, or `body.all: true`). Action **`agent_update`**: check (`{"action": "check"}`) or apply (`{"action": "apply", "channel": "latest"}`) an [agent update](/device-agent/agent-updates). Action **`agent_install`**: the one-line install command for a new machine. |
+| `device_fs` | `device`, `path` | The device's [filesystem](/device-agent/filesystem): list a folder, read, write and delete files; actions `move`, `push` and `pull` (copy files between the machine running the MCP server and the device). |
+| `device_script` | `device`, `script` | [Custom scripts](/device-agent/custom-scripts) installed on one device. Writing one installs it, makes it executable and reloads the agent's registry: `battery.sh` becomes the resource `battery`. |
+| `product_script` | `product`, `script` | [Fleet-wide scripts](/device-agent/custom-scripts#fleet-wide-product-scripts): stored once in the product's storage and run by every device as a product API resource. Creating one sets up the storage, the resource and the product code in one call. |
+| `product_playbook` | `product`, `playbook` | [Playbooks](/cli/reference/playbook-commands) stored on a product. Actions `validate`, `run` (one device, a list, a group or the whole product, with dry-run and check modes) and `rollout` (in batches, with a failure threshold). |
 
-## Resources and properties
+Two product properties configure the CLI's terminal dashboard and are written as regular `product_property` records: **`logs`** (the [log sources](/cli/reference/product-commands#logs), `{sources, default}`) and **`dashboard_metrics`** (the [dashboard metrics](/cli/reference/product-commands#dashboard-metrics), the whole array). Both are checked before they are saved, and `thinr_resource_describe` type `"product_property"` shows their shape.
 
-- **`thinr_resource_list`**: list a device's resources, with input/output schemas when advertised.
-- **`thinr_resource_call`**: invoke a resource with typed inputs.
-- **`thinr_property_get`** · **`thinr_property_set`**: read and write device properties.
+## Platform types
 
-## Device scripts
+The rest of the account is reachable the same way. The most used:
 
-- **`thinr_script_list`** · **`thinr_script_write`** · **`thinr_script_delete`**: manage [per-device custom scripts](/device-agent/custom-scripts) remotely; `write` installs, marks executable and reloads the registry in one call.
+- **Devices**: `device`, and its children `device_property`, `device_resource` (the live API of a connected device: list it, run one with action `call`; the agent's `monitoring` resource gives the live metrics), `device_token`, `device_bucket`, `device_service`.
+- **Products**: `product`, `product_property`, and the profile its devices get: `product_profile_api` (action `call` runs a resource across the product), `product_profile_bucket`, `product_profile_property`, `product_profile_autoprovision`, `product_profile_flow`, `product_profile_code`.
+- **Data**: `bucket`, `bucket_data` (the time series: list reads it, create writes samples, e.g. the monitoring history), `storage` and `storage_file`.
+- **Alarms**: `alarm_rule` and `alarm_instance` (update one to acknowledge, shelve or clear it).
+- **Access**: `token`, `asset_type`, `asset_group`, `project`, `role`, `claim`.
+- **Guides**: `doc` (the platform's concepts, product code, the custom scripts contract…) and `profile` (this CLI's environments).
 
-## Monitoring, history and updates
+`thinr_resource_describe` without arguments lists every type, administration ones included (users, hosts, domains), with its operations and actions.
 
-- **`thinr_monitoring`**: the device's live metrics.
-- **`thinr_bucket_read`**: query stored time-series data (e.g. the monitoring bucket).
-- **`thinr_update`**: check or apply an agent update.
+## Examples
 
-## Alarms
+```json
+{"tool": "thinr_resource_list", "arguments": {"type": "device", "search": "edge-gw"}}
+{"tool": "thinr_resource_call", "arguments": {"type": "device", "action": "exec", "ids": {"device": "gw_1"}, "body": {"command": "uptime"}}}
+{"tool": "thinr_resource_call", "arguments": {"type": "device", "action": "exec", "body": {"command": "df -h /", "product": "gateways"}}}
+{"tool": "thinr_resource_get", "arguments": {"type": "device_fs", "ids": {"device": "gw_1", "path": "/etc/hosts"}}}
+{"tool": "thinr_resource_create", "arguments": {"type": "device_fs", "ids": {"device": "gw_1", "path": "/tmp/app.conf"}, "body": {"content": "port=8080\n"}}}
+{"tool": "thinr_resource_call", "arguments": {"type": "device_resource", "action": "call", "ids": {"device": "gw_1", "resource": "monitoring"}}}
+{"tool": "thinr_resource_update", "arguments": {"type": "device_property", "ids": {"device": "gw_1", "property": "setpoint"}, "body": {"value": {"target": 21.5}}}}
+{"tool": "thinr_resource_call", "arguments": {"type": "product_playbook", "action": "run", "ids": {"product": "gateways", "playbook": "app-config"}, "body": {"device": "gw_1", "check": true}}}
+```
 
-- **`thinr_alarm_rules`** · **`thinr_alarm_rule_read`** · **`thinr_alarm_rule_write`** · **`thinr_alarm_rule_delete`**: manage alarm rules.
-- **`thinr_alarm_instances`** · **`thinr_alarm_instance_stats`** · **`thinr_alarm_instance_get`** · **`thinr_alarm_instance_update`** · **`thinr_alarm_instance_delete`**: triage what's currently firing.
+## Calls that ask first
 
-## Provisioning and lifecycle
+Some actions reach many devices at once. `exec` on several devices, a playbook `run` on several devices and a playbook `rollout` first answer the devices they would reach, without running anything. They run when the call is repeated with `confirm: true` in the body, or, in clients that support it, after the server asks you directly. The same goes for other high-impact actions of the platform (replacing a whole product profile, restarting a host).
 
-- **`thinr_agent_install_command`**: generate the install one-liner for onboarding a new device.
-- **`thinr_device_set_product`**: assign a device to a product.
-- **`thinr_device_delete`**: remove a device record (irreversible).
+## Read-only mode
 
-## Products and fleet operations
+`thinr mcp --read-only` (or `THINR_MCP_READ_ONLY=1` in the client's environment) serves only what reads: `describe`, `list`, `get` and the read-only actions. Use it for assistants that should diagnose but never change anything.
 
-- **`thinr_products`** · **`thinr_product_create`** · **`thinr_product_update`** · **`thinr_product_delete`**: manage products.
-- **`thinr_product_exec`**: run a command on every active device of a product, in parallel.
-- **`thinr_product_write`**: deploy a file across the product.
-- **`thinr_product_property_get/set/delete`**: properties attached to the product itself.
-
-## Product scripts
-
-- **`thinr_product_script_list/read/write/delete`**: [fleet-wide custom scripts](/device-agent/custom-scripts#fleet-wide-product-scripts); `write` orchestrates storage, the typed API resource and enablement in one idempotent call.
-
-## Product configuration
-
-- **`thinr_product_profile_api_list/get/set/delete`**: the product's API resources.
-- **`thinr_product_profile_bucket_list/get/set/delete`**: data buckets (like the monitoring bucket).
-- **`thinr_product_profile_property_list/get/set/delete`**: property templates.
-- **`thinr_product_logs_list/add/remove/presets/set_default`**: [log sources](/cli/reference/product-commands#logs).
-- **`thinr_product_metric_list/set/delete`**: [dashboard metrics](/cli/reference/product-commands#dashboard-metrics).
-
-## Playbooks
-
-- **`thinr_playbook_schema`** · **`thinr_playbook_validate`** · **`thinr_playbook_run`**: author and run ad-hoc playbooks.
-- **`thinr_product_playbook_list/read/write/delete`**: playbooks stored on a product.
-- **`thinr_product_playbook_run`**: run against a single device, with dry-run and check modes.
-- **`thinr_product_playbook_rollout`**: progressive fleet rollout with batches and a failure threshold.
-
-## Access tokens
-
-- **`thinr_token_list/get/create/update/delete`**: user-level access tokens.
-- **`thinr_device_token_list/create/delete`**: per-device tokens.
+```bash
+claude mcp add thinr-ro -s user -- thinr mcp --read-only
+```
 
 ## Seeing the live schemas
 
-The catalog above is the map; the source of truth is the server itself. Every MCP client can inspect the registered tools and their JSON schemas, so when in doubt, ask your assistant to describe a tool before using it.
+This page is the map; the source of truth is the server itself. Ask your assistant to call `thinr_resource_describe` for a type before using it: the answer includes the schemas of this server's API and examples ready to send.

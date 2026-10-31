@@ -15,26 +15,27 @@ The MCP server **is** the CLI: if you've [installed and authenticated `thinr`](/
 
 - **No bespoke integration code.** The tools are already there: one registration command and your assistant operates real devices. Anything you'd otherwise script against the API, an agent can compose on the fly.
 - **Same auth and access control.** The server acts under your profile's token, so an assistant can do exactly what you can do from the CLI, nothing more. Roles, scoping and revocation apply identically.
-- **Fleet-aware by design.** Every tool accepts optional `device_id`, `user` and `profile` arguments, so a single running server addresses any device in any of your configured environments, without restarts.
+- **Fleet-aware by design.** Every tool accepts optional `user` and `profile` arguments, and records are addressed by `ids`, so a single running server reaches any device in any of your configured environments, without restarts.
 
 This changes what "remote management" means in practice: instead of translating a hunch into commands, you describe the outcome ("find out why store 14 keeps dropping offline and fix it") and the agent inspects, diagnoses and acts with the same primitives you'd use by hand.
 
 ## What it exposes
 
-More than eighty tools, grouped by capability:
+Eight tools reach everything: `thinr_resource_describe`, `_list`, `_get`, `_create`, `_update`, `_delete`, `_clone` and `_call`. What a call touches is set by its **type** (a device, a file on a device, a product script, a bucket's time series…), the **ids** that locate the record, and, for `thinr_resource_call`, the **action**:
 
-| Area | Examples |
-|------|----------|
-| Discovery | `thinr_devices`, `thinr_device_info`, `thinr_profiles` |
-| Shell and files | `thinr_exec`, `thinr_read`, `thinr_push`, `thinr_ls`, `thinr_rm`, `thinr_mv` |
-| Resources and properties | `thinr_resource_call`, `thinr_property_get`, `thinr_property_set` |
-| Monitoring and alarms | `thinr_monitoring`, `thinr_bucket_read`, `thinr_alarm_rules`, `thinr_alarm_instances` |
-| Provisioning and updates | `thinr_agent_install_command`, `thinr_update`, `thinr_device_set_product` |
-| Products and fleet | `thinr_products`, `thinr_product_exec`, `thinr_product_script_write`, `thinr_product_metric_set` |
-| Playbooks | `thinr_playbook_validate`, `thinr_product_playbook_run`, `thinr_product_playbook_rollout` |
-| Access tokens | `thinr_token_create`, `thinr_device_token_list` |
+| To… | The assistant calls |
+|-----|---------------------|
+| Find devices | `thinr_resource_list` type `device`, with `search` or `filter` |
+| Run a command | `thinr_resource_call` type `device`, action `exec`: one device, a list, a product or group, or the whole fleet |
+| Read and write files | type `device_fs`, ids `{device, path}`; actions `move`, `push`, `pull` |
+| Read live metrics | `thinr_resource_call` type `device_resource`, action `call`, ids `{device, resource: "monitoring"}` |
+| Query history | `thinr_resource_list` type `bucket_data`, ids `{bucket}` |
+| Triage alarms | types `alarm_rule` and `alarm_instance` |
+| Extend devices with scripts | types `device_script` and `product_script` |
+| Change the fleet safely | type `product_playbook`, actions `validate`, `run`, `rollout` |
+| Update the agent | `thinr_resource_call` type `device`, action `agent_update` |
 
-The complete list, with what each tool does, is in the [tool catalog](./tool-catalog).
+The assistant learns the rest from the server: `thinr_resource_describe` lists every type with its actions and ready-to-send examples. Calls that would act on many devices at once answer with their targets first and only run once confirmed, and `thinr mcp --read-only` serves only what reads. The [tool catalog](./tool-catalog) has the details.
 
 ## Next
 

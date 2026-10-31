@@ -51,7 +51,7 @@ Restart the assistant and check the wiring by asking:
 
 > List my ThinRemote devices.
 
-**You should see** the assistant call the `thinr_devices` tool and answer with the same devices `thinr device list` shows.
+**You should see** the assistant call `thinr_resource_list` with type `device` and answer with the same devices `thinr device list` shows.
 
 ## A real session
 
@@ -59,11 +59,11 @@ Here is what day-to-day use looks like. Suppose a fleet of gateways and a disk f
 
 > **You:** Which of my devices are running low on disk?
 >
-> The assistant calls `thinr_devices` and reads monitoring data for each one, then answers: "edge-gw-17 is at 92% on `/`. The rest are below 60%."
+> The assistant lists your devices and reads the monitoring data of each one, then answers: "edge-gw-17 is at 92% on `/`. The rest are below 60%."
 >
 > **You:** What's eating the space on edge-gw-17?
 >
-> It runs `du` through the `thinr_exec` tool and reports: "4.1 GB of rotated logs under `/var/log`, and 1.8 GB in `/var/cache/apt`."
+> It runs `du` on the device (the `exec` action of `thinr_resource_call`) and reports: "4.1 GB of rotated logs under `/var/log`, and 1.8 GB in `/var/cache/apt`."
 >
 > **You:** Clean both up, then show me the disk again.
 >
@@ -80,13 +80,14 @@ Nothing here was pre-scripted: the assistant composes the same primitives you us
 
 The assistant acts under your profile's token: it can do exactly what you can do with the CLI, nothing more. A few habits help when handing tools to an AI:
 
-- Your MCP client asks for confirmation before tool calls by default; keep that on for tools that modify state (`thinr_exec`, `thinr_rm`, rollouts).
+- Your MCP client asks for confirmation before tool calls by default; keep that on for calls that modify state (commands, file writes and deletes, rollouts). Commands and rollouts on several devices also answer their targets first and only run once confirmed.
 - For cautious setups, create a separate [profile](/cli/reference/profile-commands) backed by a token with narrower permissions, and pass `profile` per call or set `THINR_PROFILE` for the server.
-- Every tool accepts optional `device`, `user` and `profile` arguments, so one running server can address any device in any of your environments.
+- Every tool accepts optional `user` and `profile` arguments, so one running server can address any device in any of your environments.
+- For an assistant that should only diagnose, register the server as `thinr mcp --read-only`: it serves only what reads.
 
 ## Going deeper
 
 - [MCP overview](/mcp/overview): how the server fits the platform.
-- [Tool catalog](/mcp/tool-catalog): every tool the server exposes.
+- [Tool catalog](/mcp/tool-catalog): the eight tools, and the types and actions they reach.
 - [Setup with Claude Code](/mcp/connect-your-client) and [Setup with Cursor](/mcp/connect-your-client): client-specific configuration.
 - [Best practices](/mcp/best-practices): patterns for safe and effective AI operation.

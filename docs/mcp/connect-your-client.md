@@ -55,10 +55,11 @@ Restart the client and ask:
 
 > List my ThinRemote devices.
 
-**You should see** a call to the `thinr_devices` tool answering with the same devices `thinr device list` shows. From there, continue with [Drive your fleet with AI](/getting-started/ai-assistant) for a real working session.
+**You should see** a call to `thinr_resource_list` with type `device`, answering with the same devices `thinr device list` shows. From there, continue with [Drive your fleet with AI](/getting-started/ai-assistant) for a real working session.
 
 ## Troubleshooting
 
 - **The client can't find `thinr`.** GUI apps on macOS launch without your shell's `PATH`, so desktop clients may not see the npm global bin. Use the absolute path in `command` (find it with `which thinr`).
-- **Tools fail with auth errors.** The server uses the CLI's active profile; make sure `thinr device list` works in a terminal first, and re-authenticate with `thinr` if the token was revoked.
+- **Tools fail with auth errors.** The server uses the CLI's active profile; make sure `thinr device list` works in a terminal first, and re-authenticate with `thinr login` if the token was revoked.
 - **Several environments.** The server follows the default profile. Pin a different one by setting `THINR_PROFILE` in the client's `env` block, or let the assistant pass `profile` per tool call; see [`thinr profile`](/cli/reference/profile-commands).
+- **An assistant that should only look.** Register the server as `thinr mcp --read-only`: it serves only the tools and actions that read.

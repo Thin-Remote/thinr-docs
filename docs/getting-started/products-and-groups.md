@@ -42,15 +42,15 @@ Once devices are organised, every per-device operation has a product-wide counte
 thinr product exec edge-gateways "systemctl restart app" -c 5
 
 # read a property from each device, just the EU ones
-thinr product property edge-gateways firmware -g region-emea -f version
+thinr product device-property edge-gateways firmware -g region-emea -f version
 
 # call a resource across a group
-thinr product resource edge-gateways reboot -g staging
+thinr product device-resource edge-gateways reboot -g staging
 
 # push a file to the whole fleet
 thinr product push edge-gateways ./config.yaml /etc/app/config.yaml
 ```
 
-These default to **active devices only**. `property`, `exec` and `push` accept `-a, --all` to include offline devices too; `resource` calls always skip offline devices, since the device has to be connected to answer. Concurrency is capped with `-c` (default 10). Full options in the [`thinr product` reference](/cli/reference/product-commands).
+These default to **active devices only**. `device-property`, `exec` and `push` accept `-a, --all` to include offline devices too; `device-resource` calls always skip offline devices, since the device has to be connected to answer. Concurrency is capped with `-c` (default 10). Full options in the [`thinr product` reference](/cli/reference/product-commands).
 
-For changes that need more than a single command (check a condition, copy files, run steps, verify, and roll out in safe batches), step up to [playbooks](/cli/reference/playbook-commands). To update agents across a fleet, use [`thinr fleet upgrade`](/cli/reference/fleet-commands).
+For changes that need more than a single command (check a condition, copy files, run steps, verify, and roll out in safe batches), step up to [playbooks](/cli/reference/playbook-commands). To update agents across a fleet, use [`thinr agent update --all`](/cli/reference/agent-commands).

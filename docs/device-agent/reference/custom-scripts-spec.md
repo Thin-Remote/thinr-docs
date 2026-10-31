@@ -66,7 +66,7 @@ echo "{\"usage_pct\": $usage}"
 Call it from anywhere a resource can be called:
 
 ```bash
-thinr device resource edge-gw-17 disk-usage -i path=/var
+thinr device resource call edge-gw-17 disk-usage -s path=/var
 ```
 
 Scripts can also be managed remotely per device or per product, so the same resource exists across a whole fleet; see the [custom scripts guide](/device-agent/custom-scripts).

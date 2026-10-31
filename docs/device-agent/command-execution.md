@@ -5,7 +5,7 @@ description: One-shot and streaming command execution, on one device or a whole 
 
 # Command execution
 
-Run any shell command on a device without opening an interactive session, with live output and real exit codes. This is the building block most automation ends up using, and what AI assistants call through the `thinr_exec` MCP tool.
+Run any shell command on a device without opening an interactive session, with live output and real exit codes. This is the building block most automation ends up using, and what AI assistants run through the `exec` action of the MCP server.
 
 ## Behavior
 

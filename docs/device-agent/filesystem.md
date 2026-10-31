@@ -20,6 +20,6 @@ thinr device push edge-gw-17 ./config.yaml /etc/app/
 thinr device pull edge-gw-17 /var/log/app.log ./
 ```
 
-Use `push`/`pull` for real files and `read`/`write` for quick inline content. The same operations are available in the web console's file explorer, and as MCP tools (`thinr_ls`, `thinr_read`, `thinr_push`, …) for AI assistants.
+Use `push`/`pull` for real files and `read`/`write` for quick inline content. The same operations are available in the web console's file explorer, and over MCP for AI assistants (type `device_fs`, with ids `{device, path}`).
 
 Deploying the same file to a whole fleet? `thinr product push` uploads in parallel to every device of a product; see the [file management workflow](/cli/file-management).

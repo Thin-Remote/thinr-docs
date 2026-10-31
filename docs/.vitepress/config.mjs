@@ -124,7 +124,7 @@ const cliSidebar = [
       { text: 'Global options', link: '/cli/reference/global-options' },
       { text: 'thinr device', link: '/cli/reference/device-commands' },
       { text: 'thinr product', link: '/cli/reference/product-commands' },
-      { text: 'thinr fleet', link: '/cli/reference/fleet-commands' },
+      { text: 'thinr agent', link: '/cli/reference/agent-commands' },
       { text: 'thinr playbook', link: '/cli/reference/playbook-commands' },
       { text: 'thinr profile', link: '/cli/reference/profile-commands' },
       { text: 'JSON envelope', link: '/cli/reference/json-envelope' },

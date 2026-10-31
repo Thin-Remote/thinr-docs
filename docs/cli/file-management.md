@@ -52,7 +52,7 @@ thinr device exec <deviceId> "chown app:app /etc/app/config.yaml && chmod 640 /e
 
 ## From AI assistants
 
-The same operations are MCP tools: `thinr_push`, `thinr_pull`, `thinr_read`, `thinr_write`, `thinr_ls`, `thinr_mkdir`, `thinr_rm`, `thinr_mv`. "Pull the nginx config from store-14 and explain it" is a one-liner for a connected assistant; see [Drive your fleet with AI](/getting-started/ai-assistant).
+The same operations are available over MCP as the `device_fs` type, addressed with `ids` `{device, path}`: `thinr_resource_list`, `_get`, `_create`, `_update` and `_delete`, plus `thinr_resource_call` with the actions `move`, `push` and `pull`. "Pull the nginx config from store-14 and explain it" is a one-liner for a connected assistant; see [Drive your fleet with AI](/getting-started/ai-assistant).
 
 ## From the web console
 

@@ -5,23 +5,33 @@ description: Complete reference for device-scoped commands.
 
 # `thinr device`
 
-Pattern: `thinr device <action> <deviceId> [args…] [options]`
+Pattern: `thinr device <verb> <device> [args…] [options]`, with nested nouns for what hangs from a device (`thinr device property get <device> <property>`, `thinr device resource call <device> <resource>`).
 
 Every data-producing action accepts `-j, --json` (see [JSON envelope](./json-envelope)). Options listed below are action-specific.
 
 ## Discovery and status
 
-### `list [pattern]`
+### `list`
 
-List devices, optionally filtered by a case-insensitive regex matched against id and name.
+List devices with their online state, id, name, type and product.
+
+| Option | Meaning |
+|--------|---------|
+| `--search <text>` | Text to look for in ids and names. |
+| `--filter <key=value>` | Filter (repeatable): `product`, `type`, `asset_type`, `asset_group`, `project`, `labels`, or a field of the records. |
+| `--count <n>` · `--index <n>` | Page size and offset of the first record. |
 
 ```bash
 thinr device list
-thinr device list revpi
-thinr device list "^edge-|gateway"
+thinr device list --search revpi
+thinr device list --filter product=edge-gateways
 ```
 
-### `status <deviceId>`
+### `get <device>`
+
+Show the device record as JSON. Options: `-f, --field <path>` prints one field (dot path), `-o, --output <file>` writes the JSON to a file.
+
+### `status <device>`
 
 Connection stats (uptime, tx/rx, last-seen) plus the latest monitoring sample.
 
@@ -31,7 +41,7 @@ thinr device status edge-gw-17 --json
 
 ## Terminal
 
-### `console <deviceId>`
+### `console <device>`
 
 Open an interactive terminal on the device, with full TTY passthrough, resize, and signal forwarding. Exit the remote shell to close the session.
 
@@ -55,7 +65,7 @@ The proxy lives on the server while the command runs; Ctrl+C deletes it. While i
 
 ## Remote execution
 
-### `exec <deviceId> <command…>`
+### `exec <device> <command…>`
 
 Run a shell command on the device, streaming stdout/stderr live. The local process exits with the remote command's exit code.
 
@@ -90,33 +100,49 @@ echo "$CONFIG" | thinr device write edge-gw-17 /etc/app/env
 
 ## Properties and resources
 
-### `property <deviceId> [propertyId]`
+### `property`
 
-List the device's properties, or read one by name.
-
-| Option | Meaning |
+| Action | Purpose |
 |--------|---------|
-| `-f, --field <path>` | Extract a sub-field via dot path (e.g. `-f data.value`). |
+| `property list <device>` | List the device's property records. |
+| `property get <device> <property>` | Print the property record as JSON, with its value under `value`. |
+| `property set <device> <property> <value>` | Set the value (created when missing). The value is parsed as JSON, falling back to a raw string. |
+| `property delete <device> <property>` | Delete a property. Asks for confirmation unless `-y`. |
 
-### `resource <deviceId> [resource]`
-
-List the device's resources, or call one by name.
-
-| Option | Meaning |
-|--------|---------|
-| `-f, --field <path>` | Extract a sub-field from the result. |
-| `-i, --input <key=value>` | Resource input parameter (repeatable). |
+`property get` takes `-f, --field <path>` to print one field; paths start at the record, so the value's fields are under `value` (e.g. `-f value.setpoint`). `property create`, `update`, `clone` and `describe` are also available for the full record.
 
 ```bash
-thinr device resource edge-gw-17                      # list
-thinr device resource edge-gw-17 update -i action=check
+thinr device property list edge-gw-17
+thinr device property get edge-gw-17 config -f value.setpoint
+thinr device property set edge-gw-17 config '{"setpoint": 21.5}'
+```
+
+### `resource`
+
+| Action | Purpose |
+|--------|---------|
+| `resource list <device>` | List the resources the connected device exposes, with their inputs and outputs. |
+| `resource call <device> <resource>` | Call a resource. With `--from` or `--set` it runs it with that input; without, it reads its output. |
+
+`resource call` options:
+
+| Option | Meaning |
+|--------|---------|
+| `-s, --set <key=value>` | Input field (repeatable). Values are parsed as JSON when they are; dots nest (`data.source=resource`). |
+| `--from <file>` | JSON input from a file, or `-` for stdin. |
+| `-f, --field <path>` | Extract a sub-field from the result. |
+| `-o, --output <file>` | Write the answer to a file. |
+
+```bash
+thinr device resource list edge-gw-17
+thinr device resource call edge-gw-17 update -s action=check
 ```
 
 See [Properties vs resources](/getting-started/properties-vs-resources) for when to use which.
 
 ## Logs
 
-### `logs <deviceId>`
+### `logs <device>`
 
 Tail or stream device logs: journalctl by default, a file with `--path`, or a product-configured source with `--source`.
 
@@ -137,16 +163,19 @@ thinr device logs edge-gw-17 --path /var/log/syslog -n 500
 
 ## Agent updates
 
-| Action | Purpose | Options |
-|--------|---------|---------|
-| `update check <id>` | Report whether an agent update is available. | `--channel <name>` (default: `latest`) |
-| `update apply <id>` | Apply the update; the service restarts on the new binary. | `--channel <name>` |
-
-For whole-fleet rollouts with canary and batching, use [`thinr fleet upgrade`](./fleet-commands).
+Checking for and applying agent updates lives under [`thinr agent`](./agent-commands): `thinr agent check <device>`, `thinr agent update <device>`, and `thinr agent update --all` for whole-fleet rollouts with canary and batching.
 
 ## Lifecycle
 
-### `delete <deviceId>`
+### `create`, `update`, `clone`
+
+`create [device]` registers a device, `update <device>` changes fields of its record (fields left out are kept) and `clone <device> <new-id>` copies it under a new id. They take the record fields from `-n, --name`, `-d, --description`, `-s, --set <key=value>` (repeatable) and `--from <file>`; `create` also takes `-t, --type` (default `Generic`), `-c, --credentials` and `-p, --product`. `describe` prints the fields, examples and permissions of a device as the server's API defines them.
+
+### `set-product <device> <product>`
+
+Assign the device to a product (`""` unassigns it).
+
+### `delete <device>`
 
 Delete the device record from the platform. This is irreversible, so it prompts for confirmation unless `-y, --yes` is passed.
 

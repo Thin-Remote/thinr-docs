@@ -9,8 +9,8 @@ The agent updates itself **on demand**, not on a background schedule: nothing ch
 
 ```bash
 thinr-agent update --apply               # on the device
-thinr device update apply <deviceId>     # remotely, one device
-thinr fleet upgrade                      # whole fleet, canary + batches
+thinr agent update <deviceId>            # remotely, one device
+thinr agent update --all                 # whole fleet, canary + batches
 ```
 
 ## Update flow

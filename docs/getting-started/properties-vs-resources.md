@@ -19,12 +19,13 @@ A property is a named value (any JSON shape: a string, a number, an object) pers
 Use properties for state that should outlive a session: configuration, reported firmware version, the site a device sits in, a customer reference, the result of the last maintenance run.
 
 ```bash
-thinr device property edge-gw-17                 # list this device's properties
-thinr device property edge-gw-17 firmware        # read one
-thinr device property edge-gw-17 firmware -f version   # drill into a sub-field
+thinr device property list edge-gw-17                     # list this device's properties
+thinr device property get edge-gw-17 firmware             # read one
+thinr device property get edge-gw-17 firmware -f value.version   # drill into a sub-field
+thinr device property set edge-gw-17 site '{"city":"Madrid"}'    # write one
 ```
 
-The CLI reads properties; writing them is a platform operation, done from the web console or with the MCP tool `thinr_property_set` (the value replaces the property wholesale). Persisting structured state this way is the right alternative to running a command and parsing its output every time you need it.
+`set` replaces the whole value (it's parsed as JSON, and the property is created when missing). The web console and AI assistants write properties too: over [MCP](/mcp/overview) it's type `device_property`. Persisting structured state this way is the right alternative to running a command and parsing its output every time you need it.
 
 ## Resources
 
@@ -33,9 +34,9 @@ A resource is a typed endpoint the agent registers while it's connected: it runs
 Use resources for actions and live reads: restart a service, read a sensor, run a diagnostic, query the current disk usage.
 
 ```bash
-thinr device resource edge-gw-17                       # list resources, with their schemas
-thinr device resource edge-gw-17 monitoring            # call one
-thinr device resource edge-gw-17 update -i action=check   # call with typed input
+thinr device resource list edge-gw-17                         # list resources, with their schemas
+thinr device resource call edge-gw-17 monitoring              # call one
+thinr device resource call edge-gw-17 update -s action=check  # call with typed input
 ```
 
 Because resources are typed (they can advertise an input and output schema), the web console renders proper form fields for them and AI assistants can call them safely.

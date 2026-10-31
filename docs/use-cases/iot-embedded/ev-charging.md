@@ -23,7 +23,7 @@ thinr device exec charger-madrid-014 "chargectl self-test" --json
 - Recover a stuck session or reboot the unit through a named resource:
 
 ```bash
-thinr device resource charger-madrid-014 reset-session
+thinr device resource call charger-madrid-014 reset-session
 ```
 
 - Pull the OCPP or session log when a charge fails to start:

@@ -12,7 +12,7 @@ The agent updates **on demand**: nothing changes on a device until you (or your 
 Every check reports the same two numbers: what the device runs and what the channel currently offers.
 
 ```bash
-thinr device update check <deviceId>     # from your workstation
+thinr agent check <deviceId>             # from your workstation
 thinr-agent update                       # on the device, checks without applying
 ```
 
@@ -30,7 +30,7 @@ curl -s https://get.thinremote.io/latest.json    # also main.json, develop.json
 
 It carries the version and the SHA256 of every architecture's binary, which is the same manifest the agent verifies against when it updates itself.
 
-Across a fleet, `thinr fleet upgrade --dry-run` lists every outdated device without changing anything. See [fleet commands](/cli/reference/fleet-commands).
+Across a fleet, `thinr agent update --all --dry-run` lists every outdated device without changing anything. See [agent commands](/cli/reference/agent-commands).
 
 ## On the device itself
 
@@ -47,29 +47,29 @@ Useful over an SSH session, in a local cron job, or baked into your own provisio
 ## From your workstation
 
 ```bash
-thinr device update check <deviceId>
-thinr device update apply <deviceId> [--channel latest]
+thinr agent check <deviceId>
+thinr agent update <deviceId> [--channel latest]
 ```
 
 `--channel` chooses between `latest`, `main`, and `develop`. See [release channels](./channels).
 
 ## Across the fleet
 
-For many devices, don't loop over them yourself: `thinr fleet upgrade` resolves what's outdated and rolls out with a canary first, then parallel batches, aborting if too many fail:
+For many devices, don't loop over them yourself: `thinr agent update --all` resolves what's outdated and rolls out with a canary first, then parallel batches, aborting if too many fail:
 
 ```bash
-thinr fleet upgrade --dry-run               # see what would be upgraded
-thinr fleet upgrade -p edge-gateways -y     # one product, no prompt
+thinr agent update --all --dry-run              # see what would be updated
+thinr agent update --all -p edge-gateways -y    # one product, no prompt
 ```
 
-Full options in the [`thinr fleet` reference](/cli/reference/fleet-commands).
+Full options in the [`thinr agent` reference](/cli/reference/agent-commands).
 
 ## From anything that can call a resource
 
-Updates are also exposed as a regular device resource named `update`, so the web console, the REST API, and AI assistants (the `thinr_update` MCP tool) can drive them too:
+Updates are also exposed as a regular device resource named `update`, so the web console, the REST API, and AI assistants (the `agent_update` action of type `device` over [MCP](/mcp/tool-catalog)) can drive them too:
 
 ```bash
-thinr device resource <deviceId> update -i action=check
+thinr device resource call <deviceId> update -s action=check
 ```
 
 ## How it works

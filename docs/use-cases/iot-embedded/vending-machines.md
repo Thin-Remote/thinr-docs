@@ -17,7 +17,7 @@ A machine that stops taking payments earns nothing until someone visits, and by 
 - Publish a machine-specific signal (bill validator status, coin level) as a custom resource the dashboard can read:
 
 ```bash
-thinr device resource vendor-4471 stock-report
+thinr device resource call vendor-4471 stock-report
 ```
 
 - SSH into the controller over its cellular link to restart a crashed app:

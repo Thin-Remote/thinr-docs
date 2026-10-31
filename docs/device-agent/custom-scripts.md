@@ -18,14 +18,14 @@ Drop an executable into the agent's scripts directory and it registers automatic
 
 The contract is simple: answer `--describe` with your input/output schema, then read JSON on stdin and print JSON on stdout. The full protocol lives in the [custom scripts spec](/device-agent/reference/custom-scripts-spec).
 
-The agent scans that directory when it starts. A script you add later is picked up by the agent's `$scripts/reload` resource: it rescans the directory, registers what is new, unregisters what is gone, and returns the resulting list. `$scripts/info` returns the current list without rescanning. Deploying over MCP takes effect immediately because `thinr_script_write` and `thinr_script_delete` call reload for you.
+The agent scans that directory when it starts. A script you add later is picked up by the agent's `$scripts/reload` resource: it rescans the directory, registers what is new, unregisters what is gone, and returns the resulting list. `$scripts/info` returns the current list without rescanning. Deploying over MCP takes effect immediately because writing or deleting a `device_script` calls reload for you.
 
 ```bash
-thinr device resource edge-gw-17            # the script shows up as a resource
-thinr device resource edge-gw-17 battery    # call it
+thinr device resource list edge-gw-17            # the script shows up as a resource
+thinr device resource call edge-gw-17 battery    # call it
 ```
 
-You don't need shell access to deploy one: an AI assistant connected over [MCP](/mcp/overview) can do the whole cycle remotely (write the file, make it executable, reload the registry) with the `thinr_script_write` tool.
+You don't need shell access to deploy one: an AI assistant connected over [MCP](/mcp/overview) can do the whole cycle remotely (write the file, make it executable, reload the registry) by creating a record of type `device_script`.
 
 ## Fleet-wide: product scripts
 
@@ -38,7 +38,7 @@ What this buys you:
 - **Typed inputs.** Declare the input schema at registration and the web console renders proper fields; callers get validation.
 - **Everything composes.** The resource is callable per device, fan-out across the product, chartable as a [dashboard metric](/cli/reference/product-commands#dashboard-metrics), and alarmable like any built-in metric.
 
-The MCP server orchestrates the whole installation as one idempotent operation (`thinr_product_script_write`): it uploads the script to the product's file storage, registers the typed API resource bound to it, and enables it for the fleet.
+The MCP server orchestrates the whole installation as one idempotent operation (`thinr_resource_create` with type `product_script`): it uploads the script to the product's file storage, registers the typed API resource bound to it, and enables it for the fleet.
 
 ## A worked example
 
@@ -46,20 +46,20 @@ Say you run a fleet of vending machines and want the cash level as a first-class
 
 > Install a script called `cash-level` on the product `vending-machines`: it should read `/var/lib/vendor/cash.json` and return `{ "level": <number>, "currency": "<code>" }`.
 
-The assistant writes the script and calls `thinr_product_script_write`. From that moment, every vending machine exposes `cash-level`:
+The assistant writes the script and creates it as a `product_script`. From that moment, every vending machine exposes `cash-level`:
 
 ```bash
 # one machine
-thinr device resource store-14 cash-level
+thinr device resource call store-14 cash-level
 
 # the whole fleet, one entry per device
-thinr product resource vending-machines cash-level --json
+thinr product device-resource vending-machines cash-level --json
 ```
 
 And because it's a product API resource, you can put it on the fleet dashboard and alarm on it:
 
 ```bash
-thinr product metric-set vending-machines cash-level \
+thinr product metric set vending-machines cash-level \
   -r cash-level -f level -a sum --unit "EUR" -v kpi
 ```
 

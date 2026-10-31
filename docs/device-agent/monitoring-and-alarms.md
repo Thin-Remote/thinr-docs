@@ -23,10 +23,10 @@ You can read a live sample at any time, without touching the stored data:
 
 ```bash
 thinr device status <deviceId>          # connection stats + latest sample
-thinr device resource <deviceId> monitoring
+thinr device resource call <deviceId> monitoring
 ```
 
-Which filesystems get monitored is remotely configurable: set a `config` property on the device with `{ "monitoring": { "disks": { "data": "/mnt/data" } } }` and the agent applies it live, with no restart. Device properties can be set from the web console or the MCP tools.
+Which filesystems get monitored is remotely configurable: set a `config` property on the device with `{ "monitoring": { "disks": { "data": "/mnt/data" } } }` and the agent applies it live, with no restart. Device properties can be set from the web console, with `thinr device property set`, or over MCP.
 
 ## Where the data goes
 

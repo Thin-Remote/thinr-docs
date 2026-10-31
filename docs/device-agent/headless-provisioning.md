@@ -73,7 +73,7 @@ A headless install exits non-zero on failure, so it composes with `set -e` pipel
 After provisioning, confirm from your workstation:
 
 ```bash
-thinr device list my-device-01
+thinr device list --search my-device-01
 ```
 
 ## Related

@@ -5,9 +5,9 @@ description: Fan out operations across devices that belong to a product.
 
 # `thinr product`
 
-Pattern: `thinr product <action> <productId> [args…] [options]`
+Pattern: `thinr product <verb> <product> [args…] [options]`, with nested nouns for what hangs from a product (`thinr product property get <product> <property>`, `thinr product metric set <product> <name>`).
 
-Product commands operate on every device of a product at once. By default they target **active (connected) devices only**; offline devices are skipped, since the server would reject calls to them anyway.
+The fan-out commands operate on every device of a product at once. By default they target **active (connected) devices only**; offline devices are skipped, since the server would reject calls to them anyway.
 
 ## Common flags
 
@@ -25,9 +25,15 @@ These appear across most fan-out actions:
 
 ### `list`
 
-List every product, with enabled/disabled state and script count. Options: `-c, --concurrency <n>`.
+List every product, with its API resources. Options: `--search <text>`, `--filter <key=value>` (repeatable), `--count <n>`, `--index <n>`, `-c, --concurrency <n>`, `-j`.
 
-### `status <productId>`
+### `get <product>`
+
+Show a product as JSON. Options: `-f, --field <path>`, `-o, --output <file>`.
+
+The other record verbs follow the same shape: `create`, `update`, `delete` (asks unless `-y`), `clone <product> <new-id>` and `describe`. `export <product>` writes the product with everything it depends on as one JSON document, and `apply --from <file>` creates or updates a product from that document.
+
+### `status <product>`
 
 Snapshot of every device in the product: connection status plus monitoring.
 
@@ -42,7 +48,7 @@ thinr product status edge-gateways --watch 10
 
 ## Fan-out operations
 
-### `exec <productId> <command…>`
+### `exec <product> <command…>`
 
 Run a shell command in parallel on every active device.
 
@@ -57,19 +63,23 @@ Prints a status table (device, status, detail, duration) followed by per-device 
 thinr product exec edge-gateways "systemctl restart app" -c 5 --timeout 60
 ```
 
-### `property <productId> <propertyId>`
+### `device-property <product> <property>`
 
 Read a property from every device. Options: `-f, --field <path>` dot-path extraction, plus `-g`, `-a`, `-j`.
 
 ```bash
-thinr product property edge-gateways temperature -f data.celsius
+thinr product device-property edge-gateways temperature -f data.celsius
 ```
 
-### `resource <productId> <resource>`
+### `device-resource <product> <resource>`
 
-Call a resource on every active device. Options: `-i, --input <key=value>` (repeatable), `-f, --field <path>`, plus `-g`, `-j`.
+Call a resource on every active device. With `--from` or `--set` it runs the resource with that input; without, it reads its output. Options: `-s, --set <key=value>` (repeatable, values parsed as JSON when they are), `--from <file>` (JSON body, `-` for stdin), `-f, --field <path>`, plus `-g`, `-j`.
 
-### `push <productId> <localPath> <remotePath>`
+```bash
+thinr product device-resource edge-gateways update -s action=check
+```
+
+### `push <product> <local-path> <remote-path>`
 
 Upload a local file to every active device in parallel. Options: `-g`, `-c`, `-a`, `--fail-fast`, `-j`.
 
@@ -83,10 +93,12 @@ Properties attached to the product itself, not its devices:
 
 | Action | Purpose |
 |--------|---------|
-| `property-list <productId>` | List product property names. |
-| `property-get <productId> <propertyId>` | Read one. |
-| `property-set <productId> <propertyId> <value>` | Create or overwrite. The value is parsed as JSON, falling back to a raw string. |
-| `property-delete <productId> <propertyId>` | Delete (idempotent). |
+| `property list <product>` | List product property records. |
+| `property get <product> <property>` | Print the property record as JSON, with its value under `value` (so `-f` paths start there: `-f value.setpoint`). |
+| `property set <product> <property> <value>` | Create or overwrite. The value is parsed as JSON, falling back to a raw string. |
+| `property delete <product> <property>` | Delete. Asks for confirmation unless `-y`. |
+
+`property create`, `update`, `clone` and `describe` are also available for the full record.
 
 ## Dashboard metrics
 
@@ -94,11 +106,11 @@ Metrics drive the fleet dashboard for a product:
 
 | Action | Purpose |
 |--------|---------|
-| `metric-list <productId>` | List configured metrics. |
-| `metric-set <productId> <name>` | Add or update a metric. |
-| `metric-delete <productId> <name>` | Remove a metric. |
+| `metric list <product>` | List configured metrics. |
+| `metric set <product> <name>` | Add or update a metric. |
+| `metric delete <product> <name>` | Remove a metric. Asks for confirmation unless `-y`. |
 
-`metric-set` options:
+`metric set` options:
 
 | Option | Meaning |
 |--------|---------|
@@ -109,6 +121,7 @@ Metrics drive the fleet dashboard for a product:
 | `-v, --visualization <viz>` | Rendering hint: `kpi`, `bar`, `sparkline`, `list`. |
 | `-i, --interval <seconds>` | Dashboard refresh interval. |
 | `--unit <unit>` | Display unit suffix (e.g. `%`, `devices`). |
+| `-j, --json` | JSON output. |
 
 ## Logs
 
@@ -116,14 +129,14 @@ Named log sources that `thinr device logs --source` can stream:
 
 | Action | Purpose |
 |--------|---------|
-| `logs list <productId>` | List configured log sources. |
-| `logs show <productId> <name>` | Show a single source with its full command, untruncated. |
-| `logs add <productId> <name>` | Add or replace a source. |
-| `logs remove <productId> <name>` (alias `rm`) | Remove a source. |
-| `logs set-default <productId> <name>` | Set the default source. |
+| `logs list <product>` | List configured log sources. |
+| `logs get <product> <name>` | Show a single source with its full command, untruncated. |
+| `logs create <product> <name>` | Add or replace a source. |
+| `logs delete <product> <name>` | Remove a source (idempotent). Asks for confirmation unless `-y`. |
+| `logs set-default <product> <name>` | Set the default source. |
 | `logs presets` | List available rendering presets. |
 
-`logs add` options:
+`logs create` options:
 
 | Option | Meaning |
 |--------|---------|
@@ -138,11 +151,11 @@ Playbooks stored on the product. See [`thinr playbook`](./playbook-commands) for
 
 | Action | Purpose |
 |--------|---------|
-| `playbook list <productId>` | List registered playbooks. |
-| `playbook upload <productId> <name> [file]` | Upload a YAML (stdin when omitted or `-`). Validated against the schema first; `--skip-validation` bypasses, `-d, --description <text>` overrides the description. |
-| `playbook download <productId> <name>` | Print the YAML (or `-o, --output <file>`). |
-| `playbook delete <productId> <name>` | Delete (idempotent). |
-| `playbook run <productId> <name>` | Run against one device or the fleet. |
+| `playbook list <product>` | List registered playbooks. |
+| `playbook upload <product> <name> [file]` | Upload a YAML (stdin when omitted or `-`). Validated against the schema first; `--skip-validation` bypasses, `-d, --description <text>` overrides the description. |
+| `playbook download <product> <name>` | Print the YAML (or `-o, --output <file>`). |
+| `playbook delete <product> <name>` | Delete (idempotent). Asks for confirmation unless `-y`. |
+| `playbook run <product> <name>` | Run against one device or the fleet. |
 
 ### `playbook run`
 

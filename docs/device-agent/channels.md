@@ -38,21 +38,21 @@ thinr-agent update --apply               # apply if available
 thinr-agent update --channel develop --apply
 
 # remotely, via the CLI
-thinr device update check <deviceId>
-thinr device update apply <deviceId> --channel main
+thinr agent check <deviceId>
+thinr agent update <deviceId> --channel main
 
 # whole fleet, with canary and batches
-thinr fleet upgrade --channel latest
+thinr agent update --all --channel latest
 ```
 
-See [`thinr fleet`](/cli/reference/fleet-commands) for the progressive rollout options, and the [update mechanism](/device-agent/reference/auto-update) for the agent-side details.
+See [`thinr agent`](/cli/reference/agent-commands) for the progressive rollout options, and the [update mechanism](/device-agent/reference/auto-update) for the agent-side details.
 
 ## Switching channels
 
 A device is not permanently bound to a channel: the channel is simply a parameter of each update. To move a device from `latest` to `main`, apply one update from the new channel:
 
 ```bash
-thinr device update apply <deviceId> --channel main
+thinr agent update <deviceId> --channel main
 ```
 
 ## Pinning a specific version

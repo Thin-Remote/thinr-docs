@@ -34,7 +34,7 @@ thinr device console <id>
 - Roll a coordinated agent update across every provider at once:
 
 ```bash
-thinr fleet upgrade
+thinr agent update --all
 ```
 
 - Point the built-in MCP server at an AI assistant to operate across all providers from one place: see the AI assistant guide.

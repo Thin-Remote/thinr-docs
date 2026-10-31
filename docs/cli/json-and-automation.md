@@ -23,9 +23,12 @@ Three properties make this dependable in scripts:
 `-f, --field <dot.path>` drills into the result so you don't need `jq` for simple lookups:
 
 ```bash
-thinr device property store-14 information -f hardware.id
-thinr product property edge-gateways temperature -f data.celsius
+thinr device get store-14 -f product
+thinr device property get store-14 information -f value.hardware.id
+thinr product device-property edge-gateways temperature -f data.celsius
 ```
+
+`device property get` prints the whole property record, so its paths start at `value`; the fan-out `product device-property` extracts from each device's value directly.
 
 ## jq recipes
 

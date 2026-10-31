@@ -16,7 +16,7 @@ Opening ports or provisioning a VPN into an OT network is a slow, high-scrutiny 
 - Package repeatable maintenance as a custom agent script and trigger it as a named resource, so operators run a vetted action instead of ad-hoc shell:
 
 ```bash
-thinr device resource plc-line-a run-diagnostics -i level=full
+thinr device resource call plc-line-a run-diagnostics -s level=full
 ```
 
 - Pull diagnostic and register dumps back for analysis:

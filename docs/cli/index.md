@@ -15,14 +15,14 @@ description: The thinr CLI and its built-in MCP server, one tool with two faces.
 | [Run commands](./exec-commands) | `thinr device exec`, fleet-wide with `thinr product exec` |
 | [Move files](./file-management) | `push`, `pull`, `ls`, `read`, `write`, `mkdir`, `rm`, `mv` |
 | [Tunnels](./tcp-tls-tunneling) | `tcp`, `tls` and [`http`](./http-tunneling) proxies to anything the device reaches |
-| Fleet operations | [`thinr fleet upgrade`](/cli/reference/fleet-commands), [playbooks](/cli/reference/playbook-commands), product fan-out |
+| Fleet operations | [`thinr agent update --all`](/cli/reference/agent-commands), [playbooks](/cli/reference/playbook-commands), product fan-out |
 | [Automation](./json-and-automation) | `--json` envelopes, stable error codes, real exit codes |
 
 Everything is built to be scripted: data-producing commands emit a [JSON envelope](/cli/reference/json-envelope), errors carry [stable codes](/cli/reference/error-codes), and exit codes compose with `set -e` and CI pipelines.
 
 ## The MCP server
 
-The same binary, started with `thinr mcp`, exposes the platform as typed tools for Claude Code, Claude Desktop, Cursor, or any MCP client: devices, exec, files, tunnels, monitoring, products, playbooks and alarms. One running server reaches any device in any of your configured environments.
+The same binary, started with `thinr mcp`, exposes the platform to Claude Code, Claude Desktop, Cursor, or any MCP client through eight `thinr_resource_*` tools that reach every resource type: devices, exec, files, monitoring, products, playbooks, alarms and more. One running server reaches any device in any of your configured environments.
 
 Start with the [MCP overview](/mcp/overview), or jump straight to the hands-on [Drive your fleet with AI](/getting-started/ai-assistant).
 
