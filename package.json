@@ -8,6 +8,8 @@
     "preview": "vitepress preview docs"
   },
   "devDependencies": {
+    "lucide-vue-next": "^1.0.0",
+    "shiki": "^2.5.0",
     "vitepress": "^1.6.4",
     "vitepress-plugin-llms": "^1.13.5"
   }

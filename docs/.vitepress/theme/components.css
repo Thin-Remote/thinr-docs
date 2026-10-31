@@ -1,0 +1,163 @@
+/* ==========================================================================
+   Diagrams (PillarsDiagram.vue, QuickStartJourney.vue) on a graphite panel in
+   both modes, with the zoom button and dialog of diagram-zoom.js. Not
+   scoped: the dialog lives outside the components.
+   ========================================================================== */
+
+.tdocs-diagram,
+.tdocs-diagram-dialog {
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --text-strong: #f1f5f9;
+  --text-muted: #a3b1c6;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--dark-gradient);
+}
+
+.tdocs-diagram {
+  position: relative;
+  max-width: 100%;
+  margin: 0;
+}
+
+.vp-doc .tdocs-diagram {
+  margin: 24px auto;
+}
+
+.dark .tdocs-diagram,
+.tdocs-band.is-dark .tdocs-diagram {
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.tdocs-diagram figcaption {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.tdocs-diagram-svg {
+  color: var(--text-strong);
+  font-family: var(--font-sans);
+}
+
+.tdocs-diagram-svg svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Enlarge: a magnifier button (added by diagram-zoom.js) and a click on the
+   diagram open it in a dialog as wide as the window */
+html.tdocs-js .tdocs-diagram .tdocs-diagram-svg {
+  cursor: zoom-in;
+}
+
+.tdocs-diagram-zoom,
+.tdocs-diagram-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-strong);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.tdocs-diagram-zoom {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.tdocs-diagram-zoom:hover,
+.tdocs-diagram-close:hover {
+  background: rgba(31, 142, 254, 0.16);
+  border-color: var(--brand-blue);
+}
+
+.tdocs-diagram-zoom:focus-visible,
+.tdocs-diagram-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.tdocs-diagram-dialog {
+  width: min(96vw, 1800px);
+  max-width: none;
+  max-height: 94vh;
+  margin: auto;
+  padding: 52px 24px 20px;
+  border: 1px solid var(--border);
+  color: var(--text-strong);
+  overflow: auto;
+}
+
+.tdocs-diagram-dialog::backdrop {
+  background: rgba(2, 6, 23, 0.78);
+}
+
+.tdocs-diagram-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.tdocs-diagram-dialog .tdocs-diagram-svg svg {
+  max-height: calc(94vh - 120px);
+}
+
+.tdocs-diagram-dialog-caption {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.tdocs-diagram-dialog-caption:empty {
+  display: none;
+}
+
+html.tdocs-diagram-open {
+  overflow: hidden;
+}
+
+/* On narrow screens a diagram keeps a readable size and scrolls sideways */
+@media (max-width: 767px) {
+  .tdocs-diagram {
+    padding: 14px;
+  }
+
+  .tdocs-diagram .tdocs-diagram-svg {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tdocs-diagram .tdocs-diagram-svg svg {
+    min-width: 640px;
+    max-width: none;
+  }
+
+  .tdocs-diagram-dialog {
+    padding: 52px 12px 16px;
+  }
+
+  .tdocs-diagram-dialog .tdocs-diagram-svg {
+    overflow-x: auto;
+  }
+
+  .tdocs-diagram-dialog .tdocs-diagram-svg svg {
+    width: 960px;
+    max-width: none;
+    max-height: none;
+  }
+}

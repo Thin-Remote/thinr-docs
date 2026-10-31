@@ -10,7 +10,7 @@ All plans include:
 - Private ThinRemote instance.
 - Universal Linux/macOS compatibility (16 architectures).
 - Terminal, TCP, TLS, and HTTP tunneling.
-- End-to-end encryption (TLS 1.3).
+- Encryption in transit (TLS), with server certificate verification.
 - Web console and CLI access.
 - Outbound-only networking: no inbound ports required.
 

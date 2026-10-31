@@ -7,7 +7,7 @@ description: Common questions about ThinRemote.
 
 ## Does ThinRemote require opening any inbound port on my device?
 
-No. The agent opens a single outbound TLS 1.3 connection to the cloud relay. No inbound port is ever required.
+No. The agent opens a single outbound TLS connection to the cloud relay and verifies the server's certificate. No inbound port is ever required.
 
 ## Does ThinRemote work behind corporate firewalls and NAT?
 
@@ -19,7 +19,7 @@ Linux (kernel 2.6+, any distribution) and macOS 15.0+. See [Supported architectu
 
 ## Is my data encrypted end-to-end?
 
-Yes. TLS 1.3 is used for transport; the relay never sees plaintext payloads.
+Every leg is encrypted in transit with TLS, and the agent verifies the server's certificate. The relay terminates those connections to route them, so for a service that must stay end-to-end encrypted, reach it through a [TCP or TLS tunnel](/cli/tcp-tls-tunneling): the service's own TLS passes through untouched.
 
 ## Can I run ThinRemote on my own infrastructure (private cloud)?
 

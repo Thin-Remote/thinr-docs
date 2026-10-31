@@ -1,0 +1,1113 @@
+/* ==========================================================================
+   The Thinger.io docs look (the thinger-web design system) for the VitePress
+   default theme, on the ThinRemote identity of the landing
+   (landing/DESIGN-SYSTEM.md): a graphite base instead of the Thinger navy, a
+   green "terminal" accent for kickers, markers and active bars (never on
+   buttons), and the shared blue of the logo for buttons and links.
+
+   1. Design tokens, under the names of thinger-web and the landing. The
+      .dark block remaps them onto graphite.
+   2. Those tokens mapped onto the --vp-c-* variables of the default theme.
+   3. Header: the landing bar and the row of sections.
+   4. Sidebar, outline and pager.
+   5. Markdown content: headings, links, notices, code, tables.
+   ========================================================================== */
+
+/* --- 1. Tokens ------------------------------------------------------------ */
+
+:root {
+  /* The blue of the logo, the same in both modes */
+  --brand-blue: #1f8efe;
+
+  /* Brand blue for fills, borders and icons */
+  --primary: #1f8efe;
+  --primary-dark: #1a7de8;
+  --primary-subtle: #f0f7ff;
+  --primary-soft-2: rgba(31, 142, 254, 0.28);
+  --primary-glow: rgba(31, 142, 254, 0.18);
+  /* Text in the brand blue: #1f8efe is 3.3:1 on white, below AA; this one is
+     5.1:1 on white and 4.8:1 on the tinted backgrounds */
+  --primary-text: #0f6bd6;
+  --primary-ink: #0b65c2;
+  /* Buttons with white text: 4.6:1 */
+  --cta-bg: #1673e0;
+  --cta-bg-hover: #0f6bd6;
+
+  /* ThinRemote green: kickers, markers, active bars and arrows, never buttons.
+     --accent-ink is the one for the page background (5.5:1 on white) */
+  --accent-on-dark: #34d399;
+  --accent-on-light: #047857;
+  --accent-ink: var(--accent-on-light);
+  --accent-marker: #10b981;
+  --accent-glow: rgba(52, 211, 153, 0.14);
+  --accent-ring: rgba(52, 211, 153, 0.22);
+
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-strong: #0f172a;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+
+  /* Graphite base: hero, page header, diagrams, code and footer */
+  --dark-1: #0f172a;
+  --dark-2: #1e293b;
+  --dark-gradient: linear-gradient(135deg, var(--dark-1), var(--dark-2));
+  /* Grid and green glow of the graphite sections */
+  --dark-pattern: radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-glow), transparent 70%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 32px);
+  --text-on-dark: #e2e8f0;
+  --text-on-dark-soft: #cbd5e1;
+  --text-on-dark-muted: #94a3b8;
+  --primary-on-dark: #6fb6ff;
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  --container: 1200px;
+  --header-height: 64px;
+  --section-bar-height: 44px;
+
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Text colors of the notice titles: the semantic tokens darkened to reach
+     AA on their tinted background */
+  --success-ink: #047857;
+  --warning-ink: #b45309;
+  --danger-ink: #b91c1c;
+
+  /* Code: graphite in both modes */
+  --code-bg: #0f172a;
+  --code-tabs-bg: #1e293b;
+  --code-fg: #e2e8f0;
+  --code-dim: #a3b1c6;
+  --code-border: transparent;
+  --code-line: rgba(255, 255, 255, 0.08);
+
+  --header-bg: rgba(255, 255, 255, 0.97);
+  --header-bg-scrolled: var(--surface);
+  --sidebar-bg: var(--bg);
+
+  /* Lucide icons (ISC license) for CSS masks */
+  --tdocs-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
+  --tdocs-icon-tip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5'/%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3C/svg%3E");
+  --tdocs-icon-warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+  --tdocs-icon-danger: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 16h.01'/%3E%3Cpath d='M12 8v4'/%3E%3Cpath d='M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z'/%3E%3C/svg%3E");
+  --tdocs-icon-list: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M8 6h13'/%3E%3C/svg%3E");
+  --tdocs-icon-arrow-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 19-7-7 7-7'/%3E%3Cpath d='M19 12H5'/%3E%3C/svg%3E");
+  --tdocs-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+  --tdocs-icon-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+}
+
+/* Dark mode: the slate family of the landing's dark theme, on the graphite
+   base. WCAG contrast on the page background (#0f172a): body text 16.9:1,
+   --text-muted 8.2:1, --text-subtle 5.3:1, links 8.3:1, green 9.3:1. */
+.dark {
+  --primary: #6fb6ff;
+  --primary-dark: #8cc5ff;
+  --primary-subtle: rgba(31, 142, 254, 0.16);
+  --primary-soft-2: rgba(111, 182, 255, 0.35);
+  --primary-glow: rgba(31, 142, 254, 0.3);
+  --primary-text: #6fb6ff;
+  --primary-ink: #6fb6ff;
+
+  --accent-ink: var(--accent-on-dark);
+  --accent-marker: var(--accent-on-dark);
+
+  --bg: #0a0f1c;
+  --surface: #131c2f;
+  --surface-muted: #1e293b;
+  --border: #233047;
+  --border-strong: #334155;
+  --text-strong: #f1f5f9;
+  --text: #e2e8f0;
+  --text-muted: #a3b1c6;
+  --text-subtle: #8492a8;
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  --success-ink: #34d399;
+  --warning-ink: #fbbf24;
+  --danger-ink: #fca5a5;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  --code-bg: #0a0f1c;
+  --code-tabs-bg: #131c2f;
+  --code-border: #233047;
+
+  --header-bg: rgba(15, 23, 42, 0.97);
+  --header-bg-scrolled: var(--dark-1);
+  --sidebar-bg: #0b1222;
+}
+
+/* --- 2. Mapping onto the default theme ------------------------------------ */
+
+:root {
+  --vp-font-family-base: var(--font-sans);
+  --vp-font-family-mono: var(--font-mono);
+  --vp-nav-height: var(--header-height);
+  --vp-layout-max-width: 1440px;
+
+  --vp-c-bg: var(--surface);
+  --vp-c-bg-alt: var(--bg);
+  --vp-c-bg-elv: var(--surface);
+  --vp-c-bg-soft: var(--surface-muted);
+
+  --vp-c-border: var(--border-strong);
+  --vp-c-divider: var(--border);
+  --vp-c-gutter: var(--border);
+
+  --vp-c-text-1: var(--text-strong);
+  --vp-c-text-2: var(--text-muted);
+  --vp-c-text-3: var(--text-subtle);
+
+  --vp-c-brand-1: var(--primary-text);
+  --vp-c-brand-2: var(--primary-dark);
+  --vp-c-brand-3: var(--cta-bg);
+  --vp-c-brand-soft: rgba(31, 142, 254, 0.14);
+
+  --vp-c-tip-1: var(--success-ink);
+  --vp-c-tip-2: var(--success);
+  --vp-c-tip-3: var(--success);
+  --vp-c-tip-soft: rgba(16, 185, 129, 0.12);
+
+  --vp-c-warning-1: var(--warning-ink);
+  --vp-c-warning-2: var(--warning);
+  --vp-c-warning-3: var(--warning);
+  --vp-c-warning-soft: rgba(245, 158, 11, 0.14);
+
+  --vp-c-danger-1: var(--danger-ink);
+  --vp-c-danger-2: var(--danger);
+  --vp-c-danger-3: var(--danger);
+  --vp-c-danger-soft: rgba(239, 68, 68, 0.12);
+
+  --vp-button-brand-bg: var(--cta-bg);
+  --vp-button-brand-hover-bg: var(--cta-bg-hover);
+  --vp-button-brand-active-bg: var(--cta-bg-hover);
+
+  --vp-code-bg: var(--surface-muted);
+  --vp-code-color: var(--text-strong);
+  --vp-code-block-bg: var(--code-bg);
+  --vp-code-block-color: var(--code-fg);
+  --vp-code-block-divider-color: var(--code-line);
+  --vp-code-lang-color: var(--code-dim);
+  --vp-code-line-highlight-color: rgba(255, 255, 255, 0.06);
+  --vp-code-line-number-color: var(--code-dim);
+  --vp-code-copy-code-bg: var(--code-tabs-bg);
+  --vp-code-copy-code-border-color: rgba(255, 255, 255, 0.14);
+  --vp-code-copy-code-hover-bg: var(--dark-2);
+  --vp-code-copy-code-hover-border-color: rgba(255, 255, 255, 0.24);
+  --vp-code-copy-code-active-text: var(--code-dim);
+  --vp-code-copy-copied-text-content: 'Copied';
+  --vp-code-tab-bg: var(--code-tabs-bg);
+  --vp-code-tab-divider: var(--code-line);
+  --vp-code-tab-text-color: var(--code-dim);
+  --vp-code-tab-hover-text-color: #fff;
+  --vp-code-tab-active-text-color: #fff;
+  --vp-code-tab-active-bar-color: var(--accent-on-dark);
+
+  --vp-sidebar-bg-color: var(--sidebar-bg);
+  --vp-nav-bg-color: var(--header-bg);
+  --vp-local-nav-bg-color: var(--surface);
+
+  --vp-custom-block-info-border: transparent;
+  --vp-custom-block-info-text: var(--vp-c-text-1);
+  --vp-custom-block-info-bg: rgba(31, 142, 254, 0.08);
+  --vp-custom-block-info-code-bg: rgba(31, 142, 254, 0.12);
+
+  --vp-home-hero-name-color: var(--vp-c-text-1);
+}
+
+.dark {
+  --vp-c-brand-soft: rgba(31, 142, 254, 0.2);
+  --vp-c-tip-soft: rgba(16, 185, 129, 0.14);
+  --vp-c-warning-soft: rgba(245, 158, 11, 0.14);
+  --vp-c-danger-soft: rgba(239, 68, 68, 0.14);
+  --vp-c-default-soft: rgba(148, 163, 184, 0.14);
+
+  --vp-c-bg: var(--dark-1);
+  --vp-c-bg-alt: var(--bg);
+  --vp-c-bg-elv: var(--surface);
+  --vp-c-bg-soft: var(--surface);
+
+  --vp-code-bg: rgba(148, 163, 184, 0.14);
+  --vp-local-nav-bg-color: var(--dark-1);
+
+  --vp-custom-block-info-bg: rgba(31, 142, 254, 0.14);
+  --vp-custom-block-info-code-bg: rgba(31, 142, 254, 0.2);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* --- 3. Header ---------------------------------------------------------------
+   Two rows: the landing bar (logo, "Docs", search, thinremote.io links,
+   appearance, GitHub, "Book a demo") and the sections of sections.js, with
+   their icons, scrolling sideways on narrow screens. Below 960 px the rest
+   goes to the hamburger menu */
+
+:root {
+  --vp-nav-height: calc(var(--header-height) + var(--section-bar-height));
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-height: 56px;
+  }
+}
+
+.VPNavBar,
+.VPNavBar.has-sidebar,
+.VPNavBar:not(.home.top) {
+  background-color: var(--header-bg) !important;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Opaque once the page scrolls under it (doubled class to win over the rule above) */
+.VPNavBar.VPNavBar:not(.top) {
+  background-color: var(--header-bg-scrolled) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.VPNavBar .title,
+.VPNavBar .content-body,
+.VPNavBar.has-sidebar .title,
+.VPNavBar.has-sidebar .content-body {
+  background-color: transparent !important;
+}
+
+.VPNavBar .divider {
+  display: none;
+}
+
+.VPNavBar .wrapper,
+.VPNavBar.has-sidebar .wrapper {
+  padding: 0 24px !important;
+}
+
+.VPNavBar .container,
+.VPNavBar.has-sidebar .container {
+  max-width: calc(var(--vp-layout-max-width) - 48px) !important;
+  align-items: flex-start;
+}
+
+.VPNavBar .title,
+.VPNavBar.has-sidebar .title {
+  position: static !important;
+  width: auto !important;
+  padding: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.VPNavBar .title,
+.VPNavBar .content-body,
+.VPNavBarTitle .title {
+  height: var(--header-height) !important;
+  border-bottom: 0 !important;
+}
+
+/* The section row is placed against the whole bar, not the content column */
+.VPNavBar .content,
+.VPNavBar.has-sidebar .content,
+.VPNavBar .content-body {
+  position: static !important;
+  padding: 0 !important;
+}
+
+.VPNavBar .content-body {
+  justify-content: flex-start;
+}
+
+.VPNavBarTitle .logo {
+  height: 26px;
+  width: 26px;
+  margin-right: 10px;
+}
+
+/* "ThinRemote" next to the mark, as in the landing header */
+.VPNavBarTitle .title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--vp-c-text-1);
+}
+
+.tdocs-brand-accent {
+  color: var(--brand-blue);
+}
+
+/* "Docs" next to the logo (nav-bar-title-after) */
+.tdocs-nav-docs {
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--vp-c-text-2);
+}
+
+/* Order of the top row: search, links, appearance, GitHub, button */
+.VPNavBar .search {
+  order: 0;
+  flex-grow: 0;
+  padding-left: 24px !important;
+}
+
+.VPNavBar .appearance {
+  order: 2;
+  display: flex !important;
+  margin-left: auto;
+}
+
+.VPNavBar .social-links {
+  order: 3;
+  display: flex !important;
+}
+
+.VPNavBar .hamburger {
+  order: 5;
+}
+
+@media (min-width: 1280px) {
+  .VPNavBar .appearance {
+    margin-left: 0;
+  }
+}
+
+.VPNavBar .menu + .appearance::before {
+  margin: 0 18px 0 0 !important;
+  background-color: var(--border) !important;
+}
+
+.VPNavBar .appearance + .social-links::before {
+  display: none !important;
+}
+
+.VPNavBar .social-links {
+  margin: 0 0 0 6px;
+}
+
+.VPNavBar .extra {
+  display: none !important;
+}
+
+.VPNavBar .DocSearch-Button {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+@media (min-width: 768px) {
+  .VPNavBar .DocSearch-Button {
+    width: 280px;
+    height: 38px;
+    padding: 0 8px 0 12px;
+  }
+
+  .VPNavBar .DocSearch-Button .DocSearch-Button-Container {
+    flex: 1;
+  }
+
+  .VPNavBar .DocSearch-Button .DocSearch-Search-Icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    top: 0;
+  }
+
+  .VPNavBar .DocSearch-Button .DocSearch-Button-Placeholder {
+    margin-top: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--vp-c-text-2);
+  }
+}
+
+@media (max-width: 767px) {
+  .VPNavBar .DocSearch-Button {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+.VPNavBar .DocSearch-Button:hover {
+  border-color: var(--primary);
+  background: var(--surface-muted);
+}
+
+/* Row of sections */
+.VPNavBar .VPNavBarMenu {
+  position: absolute;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  height: var(--section-bar-height);
+  padding: 0 max(16px, calc((100% - var(--vp-layout-max-width)) / 2 + 16px));
+  border-bottom: 1px solid var(--border);
+  display: flex !important;
+  align-items: stretch;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.VPNavBar .VPNavBarMenu::-webkit-scrollbar {
+  display: none;
+}
+
+.VPNavBarMenu .VPNavBarMenuLink {
+  display: flex;
+  align-items: center;
+  flex: none;
+  white-space: nowrap;
+  gap: 7px;
+  padding: 0 12px;
+  line-height: var(--section-bar-height);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  box-shadow: inset 0 -2px 0 transparent;
+  transition: color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.VPNavBarMenu .VPNavBarMenuLink:hover {
+  color: var(--vp-c-text-1);
+}
+
+.VPNavBarMenu .VPNavBarMenuLink.active {
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--accent-marker);
+}
+
+.VPNavBarMenu .VPNavBarMenuLink.active .tdocs-nav-icon {
+  color: var(--accent-ink);
+}
+
+.VPNavBarMenu .VPNavBarMenuLink:focus-visible {
+  outline-offset: -2px;
+}
+
+.tdocs-nav-icon {
+  flex: none;
+}
+
+@media (min-width: 960px) {
+  .VPNavBar .hamburger {
+    display: none !important;
+  }
+
+  /* The sidebar curtain sticks relative to the sidebar padding (the nav
+     height); its default offset assumes a 64 px nav and would hide the
+     section title under the taller bar */
+  .VPSidebar .curtain {
+    top: calc(var(--vp-nav-height) * -1) !important;
+  }
+}
+
+@media (max-width: 959px) {
+  .VPNavBar .wrapper,
+  .VPNavBar.has-sidebar .wrapper {
+    padding: 0 8px 0 16px !important;
+  }
+
+  .VPNavBar .social-links {
+    display: none !important;
+  }
+
+  .VPNavBar .search {
+    margin-left: auto;
+  }
+
+  .VPNavBar .appearance {
+    margin-left: 12px;
+  }
+
+  .VPNavBar .menu + .appearance::before {
+    display: none;
+  }
+
+  .VPNavBar .hamburger {
+    display: flex !important;
+  }
+
+  .VPNavScreen .container {
+    max-width: 480px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .tdocs-nav-docs {
+    display: none;
+  }
+
+  .VPNavBarTitle .logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .VPNavBarTitle .title {
+    font-size: 1.15rem;
+  }
+}
+
+/* --- 4. Sidebar, outline and pager ------------------------------------------- */
+
+.VPSidebar {
+  border-right: 1px solid var(--border);
+}
+
+@media (min-width: 960px) {
+  .VPSidebar {
+    padding-top: calc(var(--vp-nav-height) + 4px) !important;
+  }
+}
+
+/* Section header (SidebarSection.vue, sidebar-nav-before): icon and title;
+   it replaces the title row of the first group when they share a name */
+.tdocs-sidebar-head.is-merged + .group > .VPSidebarItem.level-0 > .item {
+  display: none;
+}
+
+.tdocs-sidebar-head.is-merged + .group > .VPSidebarItem.level-0 {
+  padding-bottom: 12px;
+}
+
+/* The pages of the section hang from the section header itself: no guide
+   line at this level (it would read as a hidden parent). Guide lines only
+   mark the pages nested inside a group */
+.tdocs-sidebar-head.is-merged + .group > .VPSidebarItem.level-0 > .items {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.VPSidebar .group + .group {
+  border-top-color: var(--border);
+}
+
+.VPSidebarItem.level-1 .text,
+.VPSidebarItem.level-2 .text,
+.VPSidebarItem.level-3 .text {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--vp-c-text-2);
+}
+
+.VPSidebarItem .item:hover .text {
+  color: var(--vp-c-text-1);
+}
+
+.VPSidebarItem.level-1 > .item,
+.VPSidebarItem.level-2 > .item,
+.VPSidebarItem.level-3 > .item {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* First level: aligned with the section title, with room for the active bar */
+.VPSidebarItem.level-1 > .item {
+  margin-left: 0;
+  padding-left: 14px;
+}
+
+.VPSidebarItem.level-2 > .item,
+.VPSidebarItem.level-3 > .item {
+  /* The active bar sits on the guide line, left of the text */
+  margin-left: -13px;
+  padding-left: 12px;
+}
+
+/* The current page: brand color and a green bar on the guide line. No
+   filled block or bold, so it does not read as the heading of the list */
+.VPSidebarItem.is-active > .item .link > .text {
+  color: var(--vp-c-brand-1) !important;
+  font-weight: 500;
+}
+
+.VPSidebarItem .indicator {
+  left: -1px !important;
+  width: 2px !important;
+  border-radius: 0 !important;
+}
+
+.VPSidebarItem.level-1.is-active > .item > .indicator,
+.VPSidebarItem.level-2.is-active > .item > .indicator,
+.VPSidebarItem.level-3.is-active > .item > .indicator {
+  background-color: var(--accent-marker) !important;
+}
+
+.VPSidebarItem.level-1 > .item > .indicator {
+  left: 0 !important;
+}
+
+.VPSidebarItem.level-0.collapsible > .item .text,
+.VPSidebarItem.level-0 > .item .text {
+  font-weight: 600;
+}
+
+/* Outline */
+.VPDocAsideOutline .content {
+  border-left-color: var(--border) !important;
+}
+
+.VPDocAsideOutline .outline-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.VPDocAsideOutline .outline-title::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: var(--tdocs-icon-list) center / contain no-repeat;
+  mask: var(--tdocs-icon-list) center / contain no-repeat;
+}
+
+.VPDocAsideOutline .outline-link {
+  font-size: 13px;
+}
+
+.VPDocAsideOutline .outline-marker {
+  background-color: var(--accent-marker) !important;
+}
+
+/* Previous / next */
+.VPDocFooter .pager-link {
+  border-color: var(--border) !important;
+  border-radius: var(--radius) !important;
+  background: var(--vp-c-bg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.VPDocFooter .pager-link:hover {
+  border-color: var(--primary) !important;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.VPDocFooter .pager-link .desc {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.VPDocFooter .pager-link.prev .desc::before,
+.VPDocFooter .pager-link.next .desc::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: var(--tdocs-icon-arrow-left) center / contain no-repeat;
+  mask: var(--tdocs-icon-arrow-left) center / contain no-repeat;
+}
+
+.VPDocFooter .pager-link.next .desc::after {
+  -webkit-mask-image: var(--tdocs-icon-arrow-right);
+  mask-image: var(--tdocs-icon-arrow-right);
+}
+
+/* --- 5. Markdown content ----------------------------------------------------- */
+
+@media (min-width: 1280px) {
+  .VPDoc.has-aside .content-container {
+    max-width: 720px !important;
+  }
+}
+
+.vp-doc a {
+  text-decoration-color: var(--primary-soft-2);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s ease, color 0.15s ease;
+}
+
+.vp-doc a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* h2: no rule above, a small green square in the margin (from 768 px) */
+.vp-doc h2 {
+  position: relative;
+  margin: 44px 0 16px;
+  padding-top: 0;
+  border-top: 0;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.vp-doc h2::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 15px;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--accent-marker);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+  transform: translateY(-50%);
+}
+
+@media (max-width: 767px) {
+  .vp-doc h2::before {
+    display: none;
+  }
+}
+
+/* The permalink follows the heading text instead of the left margin */
+.vp-doc h2 .header-anchor,
+.vp-doc h3 .header-anchor,
+.vp-doc h4 .header-anchor {
+  position: static;
+  margin-left: 6px;
+  color: var(--vp-c-brand-1);
+}
+
+.vp-doc h3 {
+  margin-top: 32px;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+.vp-doc :not(pre) > code {
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Notices: accent bar at the left and the icon of their kind in a circle */
+.custom-block {
+  --c: var(--brand-blue);
+  --c-icon: var(--tdocs-icon-info);
+  border: 0 !important;
+  border-left: 4px solid var(--c) !important;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background-color: color-mix(in srgb, var(--c) 9%, var(--vp-c-bg)) !important;
+  padding: 14px 18px !important;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.custom-block.tip {
+  --c: var(--success);
+  --c-icon: var(--tdocs-icon-tip);
+}
+
+.custom-block.warning {
+  --c: var(--warning);
+  --c-icon: var(--tdocs-icon-warning);
+}
+
+.custom-block.danger {
+  --c: var(--danger);
+  --c-icon: var(--tdocs-icon-danger);
+}
+
+.custom-block.details {
+  --c: var(--border-strong);
+}
+
+.custom-block .custom-block-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px !important;
+  font-weight: 700;
+}
+
+.custom-block:not(.details) .custom-block-title::before {
+  content: '';
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+}
+
+.custom-block:not(.details) .custom-block-title {
+  position: relative;
+}
+
+.custom-block:not(.details) .custom-block-title::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  background: var(--c);
+  -webkit-mask: var(--c-icon) center / contain no-repeat;
+  mask: var(--c-icon) center / contain no-repeat;
+}
+
+.custom-block.info .custom-block-title {
+  color: var(--primary-ink);
+}
+
+.custom-block.tip .custom-block-title {
+  color: var(--vp-c-tip-1);
+}
+
+.custom-block.warning .custom-block-title {
+  color: var(--vp-c-warning-1);
+}
+
+.custom-block.danger .custom-block-title {
+  color: var(--vp-c-danger-1);
+}
+
+.custom-block p:not(.custom-block-title) {
+  margin: 6px 0 0;
+}
+
+/* Code blocks: dark in both modes, the language and the copy button on it */
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--code-border);
+}
+
+@media (min-width: 640px) {
+  .vp-doc div[class*='language-'] {
+    border-radius: var(--radius);
+  }
+}
+
+.vp-doc div[class*='language-'] > span.lang {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.vp-doc [class*='language-'] > button.copy {
+  border-radius: var(--radius-sm);
+}
+
+.vp-doc [class*='language-'] code {
+  font-size: 13.5px;
+}
+
+/* Code group: tab bar on the code, with the group icons */
+.vp-code-group .tabs {
+  border: 1px solid var(--code-border);
+  border-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .vp-code-group .tabs {
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+}
+
+.vp-code-group .tabs label {
+  display: inline-flex !important;
+  align-items: center;
+  line-height: 44px !important;
+  font-size: 13px !important;
+}
+
+.vp-code-group .tabs label:focus-within,
+.vp-code-group .tabs input:focus-visible + label {
+  outline: 2px solid var(--primary-on-dark);
+  outline-offset: -4px;
+}
+
+.vp-code-group div[class*='language-'] {
+  border-top: 0;
+}
+
+/* Tables: mono uppercase headers, rounded frame. Markdown tables come in a
+   .tdocs-table box (config.mjs) that scrolls on narrow screens */
+.vp-doc table {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow-x: auto;
+}
+
+.vp-doc .tdocs-table {
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.vp-doc .tdocs-table > table {
+  display: table;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* On phones the box scrolls instead of squeezing the text column */
+.vp-doc .tdocs-table td:last-child {
+  min-width: 200px;
+}
+
+.vp-doc th,
+.vp-doc td {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.vp-doc tr:last-child td {
+  border-bottom: 0;
+}
+
+.vp-doc tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+.vp-doc tbody tr:hover td {
+  background-color: color-mix(in srgb, var(--primary) 4%, transparent);
+}
+
+.vp-doc th {
+  background-color: var(--vp-c-bg-alt);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+}
+
+.vp-doc td {
+  font-size: 14px;
+}
+
+/* Buttons of the design system (.btn, .btn-primary, .btn-outline): always
+   the shared blue, never green */
+.tdocs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.tdocs-btn-primary,
+.tdocs-btn-primary:visited {
+  background: var(--cta-bg);
+  color: #fff;
+}
+
+.tdocs-btn-primary:hover {
+  background: var(--cta-bg-hover);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--primary-glow);
+}
+
+.tdocs-btn-outline {
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+  background: transparent;
+}
+
+.tdocs-btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--vp-c-brand-1);
+}
+
+.tdocs-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .tdocs-btn-primary:hover,
+  .VPDocFooter .pager-link:hover {
+    transform: none;
+  }
+}
+
+/* Code in tables: identifiers in the first column do not break in the middle,
+   and code in a header cell takes the header style */
+.vp-doc td:first-child code {
+  white-space: nowrap;
+}
+
+.vp-doc th code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+/* A code block in a code group already names its file in the tab: the
+   language label would repeat it */
+.vp-doc .vp-code-group div[class*='language-'] > span.lang {
+  display: none;
+}
+
+/* Pages nested in a group: the guide line starts under the text of the group,
+   so the children read as indented below it */
+.VPSidebarItem.level-1 > .items,
+.VPSidebarItem.level-2 > .items {
+  margin-left: 14px;
+}
+
+/* The page header (PageHeader.vue) shows the first heading of the page: the
+   markdown h1 stays in the HTML for search and links, out of sight */
+.tdocs-page-header.has-heading ~ .main .vp-doc > div > h1:first-of-type {
+  display: none;
+}
+
+.tdocs-page-header.has-heading ~ .main .vp-doc > div > h1:first-of-type + * {
+  margin-top: 0;
+}

@@ -1,12 +1,11 @@
-<template>
-  <div class="pillars-section">
-    <h2 class="pillars-title">How it all fits together</h2>
-    <p class="pillars-subtitle">
-      Three pillars, one platform. You drive your fleet from a terminal, an AI assistant or a browser — always
-      through the ThinRemote cloud, which speaks to a lightweight agent running on every device.
-    </p>
+<script setup>
+// Architecture of ThinRemote (CLI and web console, the cloud, the agent on
+// each device) on the graphite diagram panel; enlarged by diagram-zoom.js
+</script>
 
-    <div class="pillars-diagram">
+<template>
+  <figure class="tdocs-diagram">
+    <div class="tdocs-diagram-svg">
       <svg
         viewBox="0 0 960 520"
         xmlns="http://www.w3.org/2000/svg"
@@ -55,9 +54,6 @@
           <rect width="180" height="130" rx="10" fill="url(#tr-card)" stroke="#1F8EFE" stroke-width="1.5" />
           <rect x="0" y="0" width="180" height="26" rx="10" fill="#030712" />
           <rect x="0" y="13" width="180" height="13" fill="#030712" />
-          <circle cx="14" cy="13" r="3.5" fill="#ef4444" />
-          <circle cx="28" cy="13" r="3.5" fill="#eab308" />
-          <circle cx="42" cy="13" r="3.5" fill="#22c55e" />
           <text x="170" y="17" text-anchor="end" font-family="ui-monospace,monospace" font-size="9" fill="#64748b">thinr</text>
           <text x="12" y="48" font-family="ui-monospace,monospace" font-size="10" fill="#22c55e">$</text>
           <text x="22" y="48" font-family="ui-monospace,monospace" font-size="10" fill="#e2e8f0">thinr device</text>
@@ -74,9 +70,6 @@
           <rect width="180" height="130" rx="10" fill="url(#tr-card)" stroke="#1F8EFE" stroke-width="1.5" />
           <rect x="0" y="0" width="180" height="22" rx="10" fill="#030712" />
           <rect x="0" y="11" width="180" height="11" fill="#030712" />
-          <circle cx="10" cy="11" r="2.5" fill="#ef4444" />
-          <circle cx="20" cy="11" r="2.5" fill="#eab308" />
-          <circle cx="30" cy="11" r="2.5" fill="#22c55e" />
           <rect x="42" y="5" width="130" height="12" rx="2" fill="#1e293b" />
           <text x="48" y="14" font-family="ui-monospace,monospace" font-size="7.5" fill="#64748b">console.thinremote.io</text>
           <rect x="6" y="28" width="38" height="92" rx="3" fill="#030712" />
@@ -207,42 +200,11 @@
         <text x="855" y="448" text-anchor="middle" font-family="system-ui" font-size="15" font-weight="700" fill="#f1f5f9">Device Agent</text>
         <text x="855" y="466" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">Linux · macOS · embedded</text>
 
-        <text x="345" y="198" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">TLS 1.3</text>
+        <text x="345" y="198" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">TLS</text>
         <text x="345" y="322" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">HTTPS · WSS</text>
         <text x="697" y="246" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">outbound-only</text>
-        <text x="697" y="276" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">IOTMP · TLS 1.3</text>
+        <text x="697" y="276" text-anchor="middle" font-family="system-ui" font-size="12" fill="#94a3b8">IOTMP · TLS</text>
       </svg>
     </div>
-  </div>
+  </figure>
 </template>
-
-<style scoped>
-.pillars-section {
-  max-width: 1152px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 1rem;
-}
-.pillars-title {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
-  text-align: center;
-  margin: 0 0 0.75rem;
-}
-.pillars-subtitle {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto 2.5rem;
-  color: var(--vp-c-text-2);
-  line-height: 1.6;
-}
-.pillars-diagram {
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-}
-.pillars-diagram svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-</style>
